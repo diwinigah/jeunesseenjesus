@@ -1,0 +1,43 @@
+/* Pagination: override Tailwind/Bootstrap outputs inside .insc-pagination to avoid layout conflicts */
+.insc-pagination { display: flex; justify-content: center; gap: 8px; margin-top: 24px; flex-wrap: wrap; align-items: center; }
+.insc-pagination nav { margin: 0; }
+.insc-pagination ul { margin: 0; padding: 0; list-style: none; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.insc-pagination li { list-style: none; }
+.insc-pagination a,
+.insc-pagination span,
+.insc-pagination .page-link,
+.insc-pagination .pagination a,
+.insc-pagination .pagination span {
+	padding: 8px 12px;
+	border: 1px solid #d1d5db;
+	border-radius: 4px;
+	background: white;
+	color: #E8490F;
+	text-decoration: none;
+	font-size: 0.875rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 36px;
+	height: 36px;
+}
+.insc-pagination a:hover,
+.insc-pagination .page-link:hover { background: #E8490F; color: white; }
+.insc-pagination .active span,
+.insc-pagination .page-item.active .page-link,
+.insc-pagination span.active { background: #E8490F; color: white; border-color: #E8490F; }
+.insc-pagination .disabled span,
+.insc-pagination .page-item.disabled .page-link { opacity: 0.5; cursor: default; }
+
+/* Force reasonable icon sizes inside pagination to avoid oversized chevrons from Tailwind classes */
+.insc-pagination svg,
+.insc-pagination .icon,
+.insc-pagination .svg-inline--fa { width: 18px !important; height: 18px !important; }
+
+/* Make sure responsive wrapping behaves */
+.insc-pagination { padding: 6px 0; }
+
+/* Specific: if the paginator outputs text links inside <nav> without ul */
+.insc-pagination nav > a,
+.insc-pagination nav > span { margin: 0 4px; }
+

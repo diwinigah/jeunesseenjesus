@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+  <defs>
+    <radialGradient id="g" cx="35%" cy="30%">
+      <stop offset="0%" stop-color="#5fd3ff"/>
+      <stop offset="100%" stop-color="#143a9b"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Sphere -->
+  <circle cx="400" cy="430" r="220" fill="url(#g)"/>
+
+  <!-- Flame -->
+  <path d="M400 120
+           C360 70, 370 20, 420 10
+           C400 50, 450 60, 470 110
+           C485 150, 460 180, 430 190
+           C450 150, 430 130, 400 120 Z"
+        fill="#f04a1d"/>
+  <path d="M390 120
+           C340 90, 330 40, 380 15
+           C360 70, 390 100, 430 140
+           C450 160, 430 190, 390 190
+           C350 190, 330 150, 350 120
+           C360 130, 375 130, 390 120 Z"
+        fill="#f5a000"/>
+  <path d="M345 175 C370 170,390 180,410 200 C385 205,360 200,345 175 Z"
+        fill="#0d63b8"/>
+
+  <!-- J2 -->
+  <text x="310" y="520"
+        font-size="320"
+        font-family="Times New Roman, serif"
+        font-style="italic"
+        fill="white">J</text>
+  <text x="455" y="420"
+        font-size="120"
+        font-family="Times New Roman, serif"
+        font-style="italic"
+        fill="white">2</text>
+</svg>

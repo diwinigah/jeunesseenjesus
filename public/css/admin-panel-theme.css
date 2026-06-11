@@ -1,0 +1,77 @@
+.jj-filament-brand {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.jj-filament-brand__logo {
+    display: block;
+    flex: 0 0 auto;
+    height: 2.75rem;
+    max-width: 4.5rem;
+    object-fit: contain;
+    width: auto;
+}
+
+.jj-filament-brand__name {
+    color: rgb(15 23 42);
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.15;
+    max-width: 9.5rem;
+    white-space: normal;
+}
+
+.dark .jj-filament-brand__name {
+    color: rgb(248 250 252);
+}
+
+.fi-sidebar {
+    will-change: transform, width;
+}
+
+.fi-sidebar,
+.fi-sidebar-close-overlay {
+    transition-duration: 220ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fi-topbar-open-sidebar-btn,
+.fi-topbar-close-sidebar-btn,
+.fi-sidebar-close-overlay {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.jj-filament-info-widget,
+.fi-filament-info-widget {
+    display: none !important;
+}
+
+@media (max-width: 1023px) {
+    .fi-sidebar {
+        max-width: min(20rem, calc(100vw - 2rem));
+    }
+
+    .jj-filament-brand {
+        gap: 0.625rem;
+    }
+
+    .jj-filament-brand__logo {
+        height: 2.5rem;
+        max-width: 4rem;
+    }
+
+    .jj-filament-brand__name {
+        font-size: 0.9rem;
+        max-width: 8rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fi-sidebar,
+    .fi-sidebar-close-overlay {
+        transition-duration: 1ms;
+    }
+}
