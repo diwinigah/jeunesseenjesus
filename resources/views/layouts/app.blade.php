@@ -36,7 +36,7 @@
         <!-- Logo -->
         <a href="https://jeunesseenjesus.org" class="j2-logo">
             <img
-                src="{{ asset('images/logo.svg') }}"
+                src="{{ asset('images/logo.png') }}"
                 alt="J²"
                 class="j2-logo-img"
                 onerror="this.style.display='none'">
