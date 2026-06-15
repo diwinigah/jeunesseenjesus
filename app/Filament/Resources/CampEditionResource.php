@@ -50,6 +50,19 @@ class CampEditionResource extends Resource
                                     $set('slug', Str::slug($state));
                                 }
                             }),
+                        Forms\Components\FileUpload::make('cover_image_path')
+                            ->label('Image de couverture')
+                            ->helperText('L\'image sera recadrée automatiquement au format bannière 4:1')
+                            ->image()
+                            ->disk('public')
+                            ->directory('editions/covers')
+                            ->imageEditor()
+                            ->imageEditorAspectRatios(['4:1'])
+                            ->imageResizeMode('cover')
+                            ->imageResizeTargetWidth('1600')
+                            ->imageResizeTargetHeight('400')
+                            ->nullable()
+                            ->columnSpanFull(),
                         Forms\Components\TextInput::make('slug')
                             ->label('Slug')
                             ->placeholder('camp-2026')
@@ -116,6 +129,23 @@ class CampEditionResource extends Resource
                             ->placeholder('Informations internes ou publiques sur cette edition')
                             ->rows(5),
                     ]),
+                Forms\Components\Section::make('Champs optionnels du formulaire public')
+                    ->description('Activez les champs supplémentaires à afficher lors de l\'inscription')
+                    ->schema([
+                        Forms\Components\Toggle::make('show_days_presence')
+                            ->label('Afficher "Jours de présence" (Jour 1 à Jour 6)')
+                            ->default(false),
+                        Forms\Components\Toggle::make('show_children_count')
+                            ->label('Afficher "Nombre d\'enfants accompagnateurs"')
+                            ->default(false),
+                        Forms\Components\Toggle::make('show_bus_departure')
+                            ->label('Afficher "Départ avec le bus ?"')
+                            ->default(false),
+                        Forms\Components\Toggle::make('show_participant_type')
+                            ->label('Afficher "Vous êtes ?" (Élève / Étudiant / Adulte)')
+                            ->default(false),
+                    ])
+                    ->columnSpanFull(),
             ]);
     }
 

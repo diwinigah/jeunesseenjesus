@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $edition->name . ' - Liste des inscrits')
+@section('title', isset($edition) && $edition ? $edition->name . ' - Liste des inscrits' : 'Inscrits')
 
 @push('styles')
 <style>
@@ -37,69 +37,202 @@
 @endpush
 
 @section('content')
-<div class="insc-container">
-    <div class="insc-header">
-        <h1 class="insc-h1">{{ $edition->name }} — Liste des inscrits</h1>
-        <p class="insc-h1-sub">Total : {{ $registrations->total() }}</p>
+<div class="inscrits-page">
+
+    <div class="inscrits-header">
+        <h1>Liste des inscrits</h1>
+        @if($edition)
+            <div class="inscrits-edition">{{ $edition->name }}</div>
+
+        @endif
     </div>
 
-    <div class="insc-table-wrapper">
-        <div style="overflow-x:auto;">
-            <table class="insc-table">
+    @if(!$edition || $registrations->isEmpty())
+        <div class="inscrits-empty">
+            Aucun inscrit confirmé pour le moment.
+        </div>
+
+    @else
+
+        @if($stats && ($stats['eleve'] > 0 || $stats['etudiant'] > 0 || $stats['adulte'] > 0))
+        <div class="inscrits-stats">
+            <div class="stat-card">
+                <span class="stat-number">{{ $stats['eleve'] }}</span>
+                <div class="stat-label">Élèves</div>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-number">{{ $stats['etudiant'] }}</span>
+                <div class="stat-label">Étudiants</div>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-number">{{ $stats['adulte'] }}</span>
+                <div class="stat-label">Adultes</div>
+            </div>
+
+            <div class="stat-card stat-total">
+                <span class="stat-number">{{ $stats['total'] }}</span>
+                <div class="stat-label">Total</div>
+            </div>
+        </div>
+
+        @else
+        <div class="inscrits-stats">
+            <div class="stat-card stat-total">
+                <span class="stat-number">{{ $stats['total'] }}</span>
+                <div class="stat-label">Total inscrits</div>
+            </div>
+        </div>
+
+        @endif
+
+        <div class="inscrits-table-wrapper">
+            <table class="inscrits-table">
                 <thead>
                     <tr>
+                        <th>#</th>
                         <th>Nom</th>
                         <th>Prénom</th>
-                        <th class="insc-hidden-sm">Ville</th>
-                        <th class="insc-hidden-sm">Section</th>
-                        <th>Paiement</th>
-                        <th class="insc-hidden-sm">Inscription</th>
+                        <th>Ville</th>
+                        <th>Section</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($registrations as $registration)
-                        <tr>
-                            <td>{{ $registration->last_name }}</td>
-                            <td>{{ $registration->first_name }}</td>
-                            <td class="insc-hidden-sm">{{ $registration->city ?? '—' }}</td>
-                            <td class="insc-hidden-sm">{{ $registration->editionSection?->section ?? '—' }}</td>
-                            <td>
-                                @php $p = $registration->payment_status?->value; @endphp
-                                <span class="insc-badge {{ $p === 'paid' ? 'insc-badge-paid' : ($p === 'partial' ? 'insc-badge-partial' : ($p === 'unpaid' ? 'insc-badge-unpaid' : '')) }}">
-                                    @switch($p)
-                                        @case('paid') Payé @break
-                                        @case('partial') Partiellement payé @break
-                                        @case('unpaid') Non payé @break
-                                        @default — @break
-                                    @endswitch
-                                </span>
-                            </td>
-                            <td class="insc-hidden-sm">
-                                @php $s = $registration->registration_status?->value; @endphp
-                                <span class="insc-badge {{ $s === 'confirmed' ? 'insc-badge-confirmed' : ($s === 'pending' ? 'insc-badge-pending' : ($s === 'cancelled' ? 'insc-badge-cancelled' : '')) }}">
-                                    @switch($s)
-                                        @case('confirmed') Confirmée @break
-                                        @case('pending') En attente @break
-                                        @case('cancelled') Annulée @break
-                                        @default — @break
-                                    @endswitch
-                                </span>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr><td colspan="6" class="insc-empty">Aucun inscrit pour le moment.</td></tr>
-                    @endforelse
+                    @foreach($registrations as $index => $registration)
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ Str::upper($registration->last_name) }}</td>
+                        <td>{{ Str::ucfirst(Str::lower($registration->first_name)) }}</td>
+                        <td>{{ $registration->city }}</td>
+                        <td>
+                            @if($registration->editionSection)
+                                <span class="section-badge">{{ $registration->editionSection->section->label() }}</span>
+                            @else
+                                <span class="section-invite">Invité</span>
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
 
-        @if($registrations->hasPages())
-            <div class="insc-pagination">
-                {{ $registrations->links() }}
-            </div>
-        @endif
+    @endif
 
-    </div>
 </div>
+
+<style>
+.inscrits-page {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+.inscrits-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+.inscrits-header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #3D2B1F;
+}
+.inscrits-edition {
+    color: #E8490F;
+    font-weight: 600;
+    margin-top: 0.25rem;
+}
+.inscrits-stats {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+.stat-card {
+    background: #fff;
+    border: 2px solid #f0e8e4;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    text-align: center;
+    min-width: 110px;
+}
+.stat-total {
+    border-color: #E8490F;
+}
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #3D2B1F;
+}
+.stat-total .stat-number {
+    color: #E8490F;
+}
+.stat-label {
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 0.25rem;
+}
+.inscrits-table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+}
+.inscrits-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+.inscrits-table thead tr {
+    background: #3D2B1F;
+    color: #fff;
+}
+.inscrits-table th {
+    padding: 0.85rem 1rem;
+    text-align: left;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+.inscrits-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f0e8e4;
+    font-size: 0.95rem;
+}
+.inscrits-table tbody tr:hover {
+    background: #fdf6f3;
+}
+.inscrits-table tbody tr:last-child td {
+    border-bottom: none;
+}
+.section-badge {
+    background: #E8490F;
+    color: #fff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.section-invite {
+    color: #aaa;
+    font-style: italic;
+    font-size: 0.85rem;
+}
+.inscrits-empty {
+    text-align: center;
+    color: #888;
+    padding: 3rem;
+}
+@media (max-width: 640px) {
+    .inscrits-table th,
+    .inscrits-table td {
+        padding: 0.6rem 0.5rem;
+        font-size: 0.85rem;
+    }
+    .stat-card { min-width: 80px; padding: 0.75rem; }
+    .stat-number { font-size: 1.5rem; }
+}
+
+</style>
 
 @endsection

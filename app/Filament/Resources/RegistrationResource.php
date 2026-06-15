@@ -27,6 +27,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Resources\Components\Tab;
 
 class RegistrationResource extends Resource
 {
@@ -86,8 +87,9 @@ class RegistrationResource extends Resource
                             ->live(),
                         Forms\Components\Select::make('edition_section_id')
                             ->label('Section')
+                            ->helperText('Facultatif — laisser vide si invité')
                             ->options(fn (Get $get): array => self::getEditionSectionOptions((int) $get('camp_edition_id')))
-                            ->required()
+                            ->nullable()
                             ->native(false),
                         Forms\Components\TextInput::make('registration_number')
                             ->label('Numero')
@@ -138,19 +140,15 @@ class RegistrationResource extends Resource
                             ->minValue(0),
                         Forms\Components\TextInput::make('remaining_amount')
                             ->label('Montant restant')
-                            ->required()
-                            ->numeric()
-                            ->minValue(0),
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->formatStateUsing(fn (Registration $record): string => number_format((float) $record->remaining_amount, 2, ',', ' ')),
                         Forms\Components\Select::make('payment_status')
                             ->label('Statut paiement')
                             ->options(self::paymentStatusOptions())
                             ->required()
                             ->native(false),
-                        Forms\Components\Select::make('registration_status')
-                            ->label('Statut inscription')
-                            ->options(self::registrationStatusOptions())
-                            ->required()
-                            ->native(false),
+                        
                         Forms\Components\DateTimePicker::make('submitted_at')
                             ->label('Date de soumission')
                             ->required()
@@ -161,16 +159,44 @@ class RegistrationResource extends Resource
                     ])
                     ->columns(3),
 
-                Forms\Components\Section::make('Notes')
+                
+                Forms\Components\Section::make('Informations complémentaires')
                     ->schema([
-                        Forms\Components\Textarea::make('notes')
-                            ->label('Notes participant')
-                            ->rows(4),
-                        Forms\Components\Textarea::make('admin_notes')
-                            ->label('Notes administrateur')
-                            ->rows(4),
+                        Forms\Components\CheckboxList::make('days_presence')
+                            ->label('Jours de présence')
+                            ->options([
+                                'jour_1' => 'Jour 1',
+                                'jour_2' => 'Jour 2',
+                                'jour_3' => 'Jour 3',
+                                'jour_4' => 'Jour 4',
+                                'jour_5' => 'Jour 5',
+                                'jour_6' => 'Jour 6',
+                            ])
+                            ->nullable(),
+                        Forms\Components\TextInput::make('children_count')
+                            ->label('Nombre d\'enfants accompagnateurs')
+                            ->numeric()
+                            ->minValue(0)
+                            ->nullable(),
+                        Forms\Components\Select::make('participant_type')
+                            ->label('Vous êtes...')
+                            ->options([
+                                'eleve'    => 'Élève',
+                                'etudiant' => 'Étudiant',
+                                'adulte'   => 'Adulte',
+                            ])
+                            ->nullable(),
+                        Forms\Components\Toggle::make('bus_departure')
+                            ->label('Départ avec le bus')
+                            ->nullable(),
                     ])
-                    ->columns(2),
+                    ->columnSpanFull()
+                    ->visible(fn ($record) => $record && (
+                        $record->days_presence !== null ||
+                        $record->children_count !== null ||
+                        $record->bus_departure !== null ||
+                        $record->participant_type !== null
+                    )),
             ]);
     }
 
@@ -179,6 +205,13 @@ class RegistrationResource extends Resource
         return $table
             ->modifyQueryUsing(fn (Builder $query): Builder => $query->with(['campEdition', 'editionSection']))
             ->columns([
+                Tables\Columns\TextColumn::make('campEdition.name')
+                    ->label('Édition')
+                    ->badge()
+                    ->color('gray')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable()
+                    ->visible(fn ($record, $livewire = null): bool => ($livewire?->getActiveTab() ?? null) === 'archives'),
                 Tables\Columns\TextColumn::make('registration_number')
                     ->label('Numero')
                     ->searchable()
@@ -210,6 +243,25 @@ class RegistrationResource extends Resource
                     ->icon('heroicon-o-chat-bubble-left')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->placeholder('—'),
+                Tables\Columns\TextColumn::make('days_presence')
+                    ->label('Jours')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->formatStateUsing(fn ($state): string => is_array($state) ? implode(', ', array_map(fn ($k) => [
+                        'jour_1' => 'Jour 1',
+                        'jour_2' => 'Jour 2',
+                        'jour_3' => 'Jour 3',
+                        'jour_4' => 'Jour 4',
+                        'jour_5' => 'Jour 5',
+                        'jour_6' => 'Jour 6',
+                    ][$k] ?? $k, array_keys(array_filter($state)))) : '—'),
+                Tables\Columns\TextColumn::make('children_count')
+                    ->label('Nbre d\'enfants')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->placeholder('—'),
+                Tables\Columns\IconColumn::make('bus_departure')
+                    ->label('Bus')
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('editionSection.section')
                     ->label('Section')
                     ->badge()
@@ -233,17 +285,7 @@ class RegistrationResource extends Resource
                     })
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('registration_status')
-                    ->label('Inscription')
-                    ->badge()
-                    ->formatStateUsing(fn (RegistrationStatus|string $state): string => self::registrationStatusLabel($state))
-                    ->color(fn (RegistrationStatus|string $state): string => match ($state instanceof RegistrationStatus ? $state : RegistrationStatus::from($state)) {
-                        RegistrationStatus::Pending => 'warning',
-                        RegistrationStatus::Confirmed => 'success',
-                        RegistrationStatus::Cancelled => 'danger',
-                    })
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                
                 Tables\Columns\TextColumn::make('submitted_at')
                     ->label('Soumission')
                     ->dateTime('d/m/Y H:i')
@@ -267,34 +309,7 @@ class RegistrationResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
-                    Tables\Actions\Action::make('confirm')
-                        ->label('Confirmer')
-                        ->icon('heroicon-o-check-circle')
-                        ->color('success')
-                        ->visible(fn (Registration $record): bool => $record->registration_status !== RegistrationStatus::Confirmed)
-                        ->requiresConfirmation()
-                        ->action(function (Registration $record, RegistrationService $service): void {
-                            $service->confirmRegistration($record);
-
-                            Notification::make()
-                                ->title('Inscription confirmee')
-                                ->success()
-                                ->send();
-                        }),
-                    Tables\Actions\Action::make('cancel')
-                        ->label('Annuler')
-                        ->icon('heroicon-o-x-circle')
-                        ->color('danger')
-                        ->visible(fn (Registration $record): bool => $record->registration_status !== RegistrationStatus::Cancelled)
-                        ->requiresConfirmation()
-                        ->action(function (Registration $record, RegistrationService $service): void {
-                            $service->cancelRegistration($record);
-
-                            Notification::make()
-                                ->title('Inscription annulee')
-                                ->success()
-                                ->send();
-                        }),
+                    
                     Tables\Actions\Action::make('confirm_payment')
                         ->label('Paiement confirmé')
                         ->icon('heroicon-o-check-circle')
@@ -472,7 +487,7 @@ class RegistrationResource extends Resource
             ->get();
 
         foreach ($sections as $section) {
-            $options[$section->getKey()] = $section->section->label() . ' - ' . number_format((float) $section->price, 0, ',', ' ');
+            $options[$section->getKey()] = $section->section->label();
         }
 
         return $options;
@@ -489,4 +504,19 @@ class RegistrationResource extends Resource
             'edit' => Pages\EditRegistration::route('/{record}/edit'),
         ];
     }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $activeEdition = CampEdition::where('is_active', true)->first();
+
+        $query = parent::getEloquentQuery();
+
+        if ($activeEdition) {
+            $query = $query->where('camp_edition_id', $activeEdition->id);
+        }
+
+        return $query->with(['campEdition', 'editionSection']);
+    }
+
+    
 }

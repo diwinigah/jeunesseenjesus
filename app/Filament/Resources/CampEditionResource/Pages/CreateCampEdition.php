@@ -155,15 +155,7 @@ class CreateCampEdition extends CreateRecord
                             ->placeholder('Choisir une section')
                             ->helperText('Sélectionnez une section existante'),
 
-                        Forms\Components\TextInput::make('price')
-                            ->label('Tarif (XOF)')
-                            ->numeric()
-                            ->required()
-                            ->minValue(0)
-                            ->default(0)
-                            ->step(0.01)
-                            ->helperText('Mettre 0 pour gratuit')
-                            ->prefix('F CFA'),
+                        // Champ 'price' retire — le tarif n'est plus saisi dans le wizard public.
 
                         Forms\Components\TextInput::make('description')
                             ->label('Description')
@@ -211,7 +203,7 @@ class CreateCampEdition extends CreateRecord
             ->toArray();
 
         // Transform sections data for createWithSections()
-        if (! empty($data['sections']) && is_array($data['sections'])) {
+                if (! empty($data['sections']) && is_array($data['sections'])) {
             foreach ($data['sections'] as $section) {
                 // Validate that section value is in the enum
                 $sectionValue = $section['section'] ?? null;
@@ -227,7 +219,7 @@ class CreateCampEdition extends CreateRecord
                 }
 
                 $sectionsData[$sectionValue] = [
-                    'price' => (float) $section['price'],
+                    'price' => isset($section['price']) ? (float) $section['price'] : null,
                     'description' => $section['description'] ?? null,
                 ];
             }
@@ -240,7 +232,7 @@ class CreateCampEdition extends CreateRecord
         if (empty($sectionsData)) {
             Notification::make()
                 ->title('Aucune section')
-                ->body('Vous devez ajouter au moins une section avec un tarif.')
+                ->body('Vous devez ajouter au moins une section.')
                 ->danger()
                 ->persistent()
                 ->send();

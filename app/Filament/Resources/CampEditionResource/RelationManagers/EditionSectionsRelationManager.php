@@ -38,12 +38,8 @@ class EditionSectionsRelationManager extends RelationManager
                         ignoreRecord: true,
                         modifyRuleUsing: fn ($rule) => $rule->where('camp_edition_id', $this->getOwnerRecord()->getKey()),
                     ),
-                Forms\Components\TextInput::make('price')
-                    ->label('Tarif')
-                    ->placeholder('0.00')
-                    ->required()
-                    ->numeric()
-                    ->minValue(0),
+                // Le tarif n'est plus saisi publiquement. Le champ 'price' est conservé en base mais
+                // retiré du formulaire de saisie publique dans Filament.
                 Forms\Components\TextInput::make('description')
                     ->label('Description')
                     ->placeholder('Exemple : tarif famille avec reduction par tete')
@@ -65,10 +61,6 @@ class EditionSectionsRelationManager extends RelationManager
                     ->badge()
                     ->formatStateUsing(fn (SectionType|string $state): string => self::sectionLabel($state))
                     ->color(fn (SectionType|string $state): string => ($state instanceof SectionType ? $state : SectionType::from($state))->color())
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('price')
-                    ->label('Tarif')
-                    ->money((string) $this->getOwnerRecord()->currency)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('description')
                     ->label('Description')

@@ -4,49 +4,42 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Services\CampEditionService;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\View\View;
-use App\Models\Registration;
 use Illuminate\Http\RedirectResponse;
+use App\Models\Registration;
+use App\Models\CampEdition;
 
 class PublicRegistrationListController extends Controller
 {
-    public function __construct(
-        private readonly CampEditionService $campEditionService,
-    ) {}
-
     public function index(): View|RedirectResponse
     {
-        $edition = $this->campEditionService->getCurrentActiveEdition();
+        $activeEdition = CampEdition::where('is_active', true)->first();
 
-        if ($edition === null) {
-            return redirect()
-                ->route('registration.show')
-                ->with('status', 'Aucune edition active actuellement');
+        if (!$activeEdition) {
+            return view('public.inscriptions', [
+                'registrations' => collect(),
+                'edition'       => null,
+                'stats'         => null,
+            ]);
         }
 
-        /** @var LengthAwarePaginator<Registration> $registrations */
-        $registrations = Registration::query()
-            ->select([
-                'id',
-                'registration_number',
-                'first_name',
-                'last_name',
-                'city',
-                'payment_status',
-                'registration_status',
-                'edition_section_id',
-                'submitted_at',
-            ])
-            ->where('camp_edition_id', $edition->getKey())
-            ->with(['editionSection'])
-            ->orderBy('submitted_at', 'desc')
-            ->paginate(20);
+        $registrations = Registration::where('camp_edition_id', $activeEdition->id)
+            ->with('editionSection')
+            ->orderBy('last_name')
+            ->orderBy('first_name')
+            ->get();
+
+        $stats = [
+            'eleve'    => $registrations->where('participant_type', 'eleve')->count(),
+            'etudiant' => $registrations->where('participant_type', 'etudiant')->count(),
+            'adulte'   => $registrations->where('participant_type', 'adulte')->count(),
+            'total'    => $registrations->count(),
+        ];
 
         return view('public.inscriptions', [
-            'edition' => $edition,
             'registrations' => $registrations,
+            'edition'       => $activeEdition,
+            'stats'         => $stats,
         ]);
     }
 }

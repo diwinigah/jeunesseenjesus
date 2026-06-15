@@ -96,7 +96,7 @@ class CampEditionService
             foreach ($sectionsData as $sectionValue => $sectionInfo) {
                 $edition->editionSections()->create([
                     'section' => $sectionValue,
-                    'price' => (float) $sectionInfo['price'],
+                    'price' => array_key_exists('price', $sectionInfo) && $sectionInfo['price'] !== null ? (float) $sectionInfo['price'] : null,
                     'description' => $sectionInfo['description'] ?? null,
                     'is_active' => true,
                 ]);

@@ -27,6 +27,8 @@ class Registration extends Model
         'phone',
         'whatsapp_phone',
         'city',
+        'days_presence', 'children_count', 'bus_departure',
+        'participant_type',
         'total_amount',
         'paid_amount',
         'remaining_amount',
@@ -48,6 +50,9 @@ class Registration extends Model
      */
     protected $casts = [
         'gender' => Gender::class,
+        'days_presence' => 'array',
+        'children_count' => 'integer',
+        'bus_departure' => 'boolean',
         'total_amount' => 'decimal:2',
         'paid_amount' => 'decimal:2',
         'remaining_amount' => 'decimal:2',

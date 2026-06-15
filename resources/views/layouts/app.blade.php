@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <link rel="icon"
         type="image/png"
-        href="{{ asset('images/logo1.png') }}">
+        href="{{ asset('images/logo.png') }}">
     <link rel="shortcut icon"
         type="image/png"
-        href="{{ asset('images/logo1.png') }}">
+        href="{{ asset('images/logo.png') }}">
     <link rel="apple-touch-icon"
         href="{{ asset('images/logo.png') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,7 +36,7 @@
         <!-- Logo -->
         <a href="https://jeunesseenjesus.org" class="j2-logo">
             <img
-                src="{{ asset('images/logo1.png') }}"
+                src="{{ asset('images/logo.png') }}"
                 alt="J²"
                 class="j2-logo-img"
                 onerror="this.style.display='none'">

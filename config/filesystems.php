@@ -38,15 +38,14 @@ return [
             'report' => false,
         ],
 
-        // MODIFICATION ICI : On pointe directement vers le dossier public de l'hébergeur
-       'public' => [
-    'driver' => 'local',
-    'root' => public_path('storage'), // Les images iront directement dans public/storage/
-    'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/public/storage',
-    'visibility' => 'public',
-    'throw' => false,
-    'report' => false,
-],
+        'public' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public'),
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
 
         's3' => [
             'driver' => 's3',
@@ -74,9 +73,8 @@ return [
     |
     */
 
-    // MODIFICATION ICI : On adapte le lien pour correspondre au nouveau dossier public
     'links' => [
-        public_path('uploads') => public_path('uploads'),
+        public_path('storage') => storage_path('app/public'),
     ],
 
 ];

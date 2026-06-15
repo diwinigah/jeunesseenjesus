@@ -54,6 +54,15 @@ class Project extends Model
             ->withTimestamps();
     }
 
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::deleting(function (Project $project) {
+            $project->projectInvestorInterests()->delete();
+        });
+    }
+
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('status', ProjectStatus::Published->value);
