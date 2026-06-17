@@ -69,6 +69,11 @@
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('sponsoring.index') }}" class="j2-nav-link {{ request()->is('sponsoring*') ? 'active' : '' }}">
+                        Sponsoring
+                    </a>
+                </li>
+                <li>
                     <a href="{{ url('/inscrits') }}" class="j2-nav-link {{ request()->is('inscrits*') ? 'active' : '' }}">
                         Liste des inscrits
                     </a>
@@ -110,6 +115,9 @@
                 </li>
                 <li>
                     <a href="{{ url('/inscrits') }}">Liste des inscrits</a>
+                </li>
+                <li>
+                    <a href="{{ route('sponsoring.index') }}">Sponsoring</a>
                 </li>
             </ul>
         </div>

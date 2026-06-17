@@ -1,0 +1,89 @@
+@extends('layouts.app')
+
+@section('title', 'Sponsoring')
+
+@section('content')
+<style>
+/* Layout CSS optimisé pour la page de sponsoring */
+.sponsoring-page { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+/* HERO */
+.sponsor-hero { border-radius: 16px; overflow: hidden; background: #3D2B1F; color: #fff; margin-bottom: 2.5rem; }
+.sponsor-hero-img img { width: 100%; max-height: 220px; object-fit: cover; display: block; }
+.sponsor-hero-content { padding: 2rem; text-align: center; }
+.sponsor-tag { background: #E8490F; color: #fff; padding: 0.25rem 0.9rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+.sponsor-hero-content h1 { font-size: 1.8rem; font-weight: 800; margin: 0.75rem 0 0.25rem; }
+.sponsor-theme { font-size: 1.2rem; color: #f9c97c; font-style: italic; margin: 0.25rem 0; }
+.sponsor-verse { font-size: 0.9rem; opacity: 0.8; margin: 0.25rem 0; }
+.sponsor-dates { font-size: 0.95rem; margin-top: 0.5rem; opacity: 0.9; }
+/* SECTIONS */
+.sponsor-section { margin-bottom: 2.5rem; }
+.sponsor-intro { font-size: 1rem; line-height: 1.8; color: #444; background: #fdf6f3; border-left: 4px solid #E8490F; padding: 1.25rem 1.5rem; border-radius: 0 12px 12px 0; }
+.section-title { font-size: 1.1rem; font-weight: 700; color: #3D2B1F; margin-bottom: 1rem; }
+/* PROGRESSION */
+.progress-cards { display: flex; flex-direction: column; gap: 1rem; }
+.progress-card { background: #fff; border: 1px solid #f0e8e4; border-radius: 12px; padding: 1.25rem; }
+.progress-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; font-size: 0.9rem; color: #555; }
+.progress-label strong { color: #3D2B1F; font-size: 0.95rem; }
+.progress-bar-track { background: #f0e8e4; border-radius: 99px; height: 12px; overflow: hidden; }
+.progress-bar-fill { background: #E8490F; height: 100%; border-radius: 99px; transition: width 0.6s ease; }
+.progress-bar-green { background: #22c55e; }
+.progress-pct { font-size: 0.85rem; color: #888; margin-top: 0.35rem; display: block; text-align: right; }
+/* BOURSES */
+.bourse-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
+.bourse-card { background: #fff; border: 2px solid #f0e8e4; border-radius: 14px; padding: 1.25rem; text-align: center; }
+.bourse-featured { border-color: #E8490F; background: #fff8f6; }
+.bourse-libre { border-color: #f9c97c; background: #fffdf5; }
+.bourse-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+.bourse-card h4 { font-size: 0.95rem; font-weight: 700; color: #3D2B1F; margin-bottom: 0.4rem; }
+.bourse-card p { font-size: 0.8rem; color: #777; margin-bottom: 0.5rem; }
+.bourse-amount { font-size: 1.4rem; font-weight: 800; color: #E8490F; }
+.bourse-amount span { font-size: 0.75rem; font-weight: 600; }
+.bourse-label { font-size: 0.75rem; color: #aaa; }
+/* NATURE */
+.nature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.75rem; }
+.nature-card { display: flex; align-items: flex-start; gap: 0.75rem; background: #fdf6f3; border-radius: 10px; padding: 0.9rem 1rem; }
+.nature-num { background: #E8490F; color: #fff; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; }
+.nature-card p { font-size: 0.88rem; color: #444; margin: 0; line-height: 1.5; }
+/* PAIEMENT */
+.payment-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+.payment-card { background: #fff; border: 1px solid #f0e8e4; border-radius: 12px; padding: 1.25rem; text-align: center; }
+.payment-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+.payment-card h4 { font-weight: 700; color: #3D2B1F; margin-bottom: 0.4rem; font-size: 0.95rem; }
+.payment-card p { font-size: 0.85rem; color: #555; margin: 0.2rem 0; }
+.payment-link { display: inline-block; margin-top: 0.5rem; background: #E8490F; color: #fff; padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; text-decoration: none; }
+.payment-link:hover { background: #c73d0d; }
+/* CONTACT */
+.sponsor-contact { text-align: center; }
+.contact-info { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; font-size: 1rem; color: #3D2B1F; font-weight: 600; }
+/* CLOSED */
+.sponsoring-closed { text-align: center; padding: 4rem 1rem; color: #888; }
+.sponsoring-closed h1 { color: #3D2B1F; margin-bottom: 1rem; }
+/* RESPONSIVE */
+@media (max-width: 640px) { .sponsor-hero-content h1 { font-size: 1.3rem; } .bourse-grid { grid-template-columns: repeat(2, 1fr); } .payment-grid { grid-template-columns: 1fr 1fr; } .progress-label { flex-direction: column; align-items: flex-start; gap: 0.2rem; } }
+</style>
+@vite(['resources/css/sponsoring.css'])
+
+<div class="sponsoring-page">
+    <section class="sponsor-hero" aria-hidden="false">
+        <div class="sponsor-hero-img">
+            <img src="{{ asset('images/sponsor-hero.jpg') }}" alt="Soutenir le camp" onerror="this.style.display='none'">
+        </div>
+        <div class="sponsor-hero-content">
+            <span class="sponsor-tag">Sponsoring</span>
+            <h1>Aucune campagne de sponsoring active pour le moment.</h1>
+            <p class="sponsor-verse">Revenez bientôt !</p>
+        </div>
+    </section>
+
+    <section class="sponsor-section sponsoring-closed" role="region" aria-labelledby="sponsoring-closed-title">
+        <h2 id="sponsoring-closed-title">Page de sponsoring</h2>
+        <p class="sponsor-intro">Nous n'avons pas de campagne de sponsoring en cours. Si vous souhaitez proposer un partenariat, obtenir des informations ou être informé dès qu'une campagne démarre, contactez-nous.</p>
+
+        <div class="contact-info" role="contentinfo">
+            <a class="payment-link" href="mailto:contact@votre-domaine.tld">Contacter l'équipe</a>
+        </div>
+    </section>
+
+</div>
+
+@endsection

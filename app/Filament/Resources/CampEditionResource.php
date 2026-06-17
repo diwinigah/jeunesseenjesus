@@ -146,6 +146,7 @@ class CampEditionResource extends Resource
                             ->default(false),
                     ])
                     ->columnSpanFull(),
+                // Section 'Page de Sponsoring' retirée et déplacée vers une Resource dédiée `SponsoringResource`.
             ]);
     }
 

@@ -8,6 +8,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\PublicRegistrationListController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SponsoringController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -87,4 +88,8 @@ Route::prefix('projets')->group(function (): void {
         ->middleware('auth:investor')
         ->name('projects.invest');
 });
+
+// Page publique sponsoring
+Route::get('/sponsoring', [SponsoringController::class, 'index'])
+    ->name('sponsoring.index');
 
