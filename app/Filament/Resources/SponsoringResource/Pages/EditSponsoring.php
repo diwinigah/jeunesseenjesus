@@ -25,6 +25,7 @@ class EditSponsoring extends EditRecord
         $sponsoringFields = [
             'show_sponsoring_page',
             'sponsoring_theme',
+            'sponsoring_salutation',
             'sponsoring_intro',
             'sponsoring_verse',
             'budget_total',
@@ -32,6 +33,8 @@ class EditSponsoring extends EditRecord
             'participants_target',
             'participants_sponsored',
             'bourse_pleine_amount',
+            'bourse_pleine_label', 'bourse_pleine_desc',
+            'bourse_partielle_label', 'bourse_partielle_desc',
             'bourse_adulte_amount',
             'bourse_etudiant_amount',
             'bourse_lycee_amount',
@@ -51,17 +54,37 @@ class EditSponsoring extends EditRecord
             'participants_geo',
         ];
 
-        // Utiliser le service si des transformations supplémentaires existent
-        if (app()->bound(CampEditionService::class)) {
-            // Déléguer à la méthode de service si elle attend tout le tableau
-            return app(CampEditionService::class)->updateEdition($record, $data);
+        // Préparer le payload des champs sponsoring uniquement
+        $payload = collect($data)->only($sponsoringFields)->toArray();
+
+        // Forcer 0 si null sur les champs numériques NOT NULL
+        $numericNotNull = [
+            'bourse_pleine_amount', 'bourse_adulte_amount',
+            'bourse_etudiant_amount', 'bourse_lycee_amount',
+            'bourse_enfant_amount', 'budget_total', 'budget_collected',
+            'participants_target', 'participants_sponsored',
+            'participants_adultes', 'participants_etudiants',
+            'participants_lycee', 'participants_enfants',
+        ];
+
+        foreach ($numericNotNull as $field) {
+            if (array_key_exists($field, $payload) && is_null($payload[$field])) {
+                $payload[$field] = 0;
+            }
         }
 
-        // Sinon, mise à jour manuelle en ne touchant qu'aux champs sponsoring
-        // Ne jamais écraser is_active via ce formulaire
-        $filtered = collect($data)->only($sponsoringFields)->toArray();
-        $record->fill($filtered);
-        $record->save();
+        // Utiliser forceFill pour bypasser les protections de mass-assignment
+        // (le modèle `CampEdition` n'avait pas `sponsoring_salutation` dans $fillable)
+        $record->forceFill($payload)->save();
+
+        // Si un service est lié, déléguer les mises à jour restantes
+        if (app()->bound(CampEditionService::class)) {
+            $other = collect($data)->except($sponsoringFields)->toArray();
+            if (!empty($other)) {
+                return app(CampEditionService::class)->updateEdition($record, $other);
+            }
+            return $record->refresh();
+        }
 
         return $record;
     }

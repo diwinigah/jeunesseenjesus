@@ -57,6 +57,12 @@ class SponsoringResource extends Resource
                             ->nullable()
                             ->columnSpanFull(),
 
+                        TextInput::make('sponsoring_salutation')
+                            ->label('Salutation')
+                            ->placeholder('Ex: Chers amis,')
+                            ->nullable()
+                            ->columnSpanFull(),
+
                         Textarea::make('sponsoring_intro')
                             ->label('Introduction / Message aux sponsors')
                             ->rows(5)
@@ -90,24 +96,68 @@ class SponsoringResource extends Resource
                         ]),
                     ]),
 
-                Section::make('Montants des bourses (FCFA)')
+                Section::make('Bourses (types de dons)')
+                    ->description('Bourse pleine et bourse partielle affichées côte à côte')
                     ->schema([
-                        Grid::make(3)->schema([
+                        Grid::make(2)->schema([
+                            TextInput::make('bourse_pleine_label')
+                                ->label('Label bourse pleine')
+                                ->default('Bourse Pleine'),
+                            TextInput::make('bourse_pleine_desc')
+                                ->label('Description bourse pleine')
+                                ->default('Couvrez l\'intégralité des frais d\'un jeune'),
                             TextInput::make('bourse_pleine_amount')
-                                ->label('Bourse pleine')
+                                ->label('Montant bourse pleine (FCFA)')
                                 ->numeric()->default(40000),
+                            TextInput::make('bourse_partielle_label')
+                                ->label('Label bourse partielle')
+                                ->default('Bourse Partielle'),
+                            TextInput::make('bourse_partielle_desc')
+                                ->label('Description bourse partielle')
+                                ->default('Contribuez selon votre cœur'),
+                        ]),
+                    ]),
+
+                Section::make('Frais de participation par catégorie')
+                    ->description('Coûts réels affichés séparément des bourses')
+                    ->schema([
+                        Grid::make(2)->schema([
+                            TextInput::make('categorie_adulte_label')
+                                ->label('Label catégorie 1')
+                                ->default('Adulte'),
                             TextInput::make('bourse_adulte_amount')
-                                ->label('Adulte (sponsorisé)')
-                                ->numeric()->default(30000),
+                                ->label('Montant catégorie 1 (FCFA)')
+                                ->numeric()
+                                ->default(0)
+                                ->minValue(0)
+                                ->required(),
+                            TextInput::make('categorie_etudiant_label')
+                                ->label('Label catégorie 2')
+                                ->default('Étudiant'),
                             TextInput::make('bourse_etudiant_amount')
-                                ->label('Étudiant (sponsorisé)')
-                                ->numeric()->default(20000),
+                                ->label('Montant catégorie 2 (FCFA)')
+                                ->numeric()
+                                ->default(0)
+                                ->minValue(0)
+                                ->required(),
+                            TextInput::make('categorie_lycee_label')
+                                ->label('Label catégorie 3')
+                                ->default('Lycée / Collège'),
                             TextInput::make('bourse_lycee_amount')
-                                ->label('Lycée / Collège (sponsorisé)')
-                                ->numeric()->default(15000),
+                                ->label('Montant catégorie 3 (FCFA)')
+                                ->numeric()
+                                ->default(0)
+                                ->minValue(0)
+                                ->required(),
+                            TextInput::make('categorie_enfant_label')
+                                ->label('Label catégorie 4')
+                                ->default('Enfant'),
                             TextInput::make('bourse_enfant_amount')
-                                ->label('Enfant (sponsorisé)')
-                                ->numeric()->default(10000),
+                                ->label('Montant catégorie 4 (FCFA)')
+                                ->numeric()
+                                ->default(0)
+                                ->minValue(0)
+                                ->required(),
                         ]),
                     ]),
 

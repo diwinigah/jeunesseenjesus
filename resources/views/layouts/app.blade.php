@@ -25,7 +25,7 @@
             ▶ Youtube
         </a>
         <span>
-            📞 +228 91 58 15 96 / 90 21 22 42 / 97 04 45 98
+            📞 +228 93745959 / +228 99323206 
         </span>
     </div>
 </div>
@@ -55,7 +55,17 @@
                 </li>
                 <li>
                     <a href="{{ url('/camp') }}" class="j2-nav-link {{ request()->is('camp*') ? 'active' : '' }}">
-                        Inscription Evénement
+                        Inscription CIVA
+                    </a>
+                </li>
+                 <li>
+                    <a href="{{ url('/inscrits') }}" class="j2-nav-link {{ request()->is('inscrits*') ? 'active' : '' }}">
+                        Liste des inscrits
+                    </a>
+                </li>
+                  <li>
+                    <a href="{{ route('sponsoring.index') }}" class="j2-nav-link {{ request()->is('sponsoring*') ? 'active' : '' }}">
+                        Sponsoring
                     </a>
                 </li>
                 <li>
@@ -68,16 +78,8 @@
                         Partenaires
                     </a>
                 </li>
-                <li>
-                    <a href="{{ route('sponsoring.index') }}" class="j2-nav-link {{ request()->is('sponsoring*') ? 'active' : '' }}">
-                        Sponsoring
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ url('/inscrits') }}" class="j2-nav-link {{ request()->is('inscrits*') ? 'active' : '' }}">
-                        Liste des inscrits
-                    </a>
-                </li>
+              
+               
             </ul>
 
             <!-- Bouton hamburger mobile -->
@@ -99,7 +101,7 @@
         <div class="j2-footer-col">
             <h3 class="j2-footer-title">Jeunesse en Jésus</h3>
             <p>Doulassame, côté sud<br>Clôture université de Lomé</p>
-            <p>📞 +228 91 58 15 96 /<br>90 21 22 42 / 97 04 45 98</p>
+            <p>📞 +228 93745959  /<br>+228 99323206 </p>
         </div>
         <div class="j2-footer-col">
             <h3 class="j2-footer-title">Liens rapides</h3>
@@ -392,7 +394,7 @@ a {
         border-radius: 4px !important;
         font-size: 1.3rem !important;
         cursor: pointer !important;
-        color: #333 !important;
+        color: #E8490F !important;
     }
 
     .j2-header {
@@ -462,7 +464,7 @@ a {
         width: 40px !important;
         height: 40px !important;
         background: none !important;
-        border: 1px solid #ddd !important;
+        border: 1px solid #E8490F  !important;
         border-radius: 4px !important;
         font-size: 1.3rem !important;
         cursor: pointer !important;
