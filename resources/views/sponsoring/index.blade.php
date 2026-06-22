@@ -438,8 +438,19 @@
 ═══════════════════════════════════ */
 @media (max-width: 480px) {
     .sp-page { padding: 0 0.75rem 3rem; }
+    .sp-hero img {
+        max-height: 350px;
+    }
+    .sp-hero-overlay {
+        padding: 1.75rem 1rem;
+    }
     .sp-hero-title { font-size: 1.2rem; }
     .sp-hero-theme { font-size: 0.88rem; }
+    .sp-hero-verse {
+        font-size: 0.82rem;
+        margin: 0.5rem 0;
+        line-height: 1.4;
+    }
     .sp-hero-dates {
         font-size: 0.78rem;
         padding: 0.3rem 0.75rem;
@@ -618,7 +629,7 @@
     <div class="sp-section">
         <div class="sp-section-title"><span class="sp-icon"> 
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7l9-4 9 4"/><path d="M21 7v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7"/></svg>
-        </span> Pévision des participants</div>
+        </span> Prévision des participants</div>
 
         <div class="sp-repartition">
             <div class="sp-rep-card">

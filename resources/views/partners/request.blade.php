@@ -52,7 +52,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('partners.store') }}" novalidate>
+        <form method="POST" action="{{ route('partners.store') }}" novalidate data-recaptcha>
             @csrf
 
             <div class="part-req-row">
@@ -185,6 +185,7 @@
             </div>
 
             <div class="part-req-btn-group">
+                <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
                 <button
                     type="submit"
                     id="submit-btn"

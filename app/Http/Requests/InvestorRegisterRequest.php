@@ -21,8 +21,8 @@ class InvestorRegisterRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'organization_name' => ['nullable', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:investor_users,email'],
-            'phone' => ['required', 'regex:/^\+?[0-9\s\-\(\)]{7,}$/'],
+            'email' => ['required', 'email:rfc,dns', 'max:150', 'unique:investor_users,email'],
+            'phone' => ['required', 'string', 'regex:/^\+?[0-9\s\-\(\)]{7,20}$/'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ];
     }

@@ -339,7 +339,7 @@ textarea.form-input {
     <div class="form-errors-block">Merci de corriger les champs indiques.</div>
 @endif
 
-<form method="POST" action="{{ route('registration.store') }}" class="registration-card">
+<form method="POST" action="{{ route('registration.store') }}" class="registration-card" data-recaptcha>
     @csrf
 
     <div class="form-grid-2">
@@ -390,8 +390,7 @@ textarea.form-input {
             @if ($errors->has('phone') && session('_old_input')) <div class="form-error">{{ $errors->first('phone') }}</div> @endif
             <p class="form-helper">
                 📞 Indicatif international accepté (ex: +228, +33).<br>
-                <strong>NB :</strong> Numéro valide exigé pour
-                la finalisation du paiement et de l'inscription.
+                <strong>NB: Numéro valide exigé .</strong>
             </p>
         </div>
 
@@ -461,6 +460,7 @@ textarea.form-input {
     @endif
 
     <div style="margin-top:20px">
+        <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
         <button
             type="submit"
             id="submit-btn"

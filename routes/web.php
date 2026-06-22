@@ -53,20 +53,24 @@ Route::prefix('investisseur')->group(function (): void {
     Route::middleware('guest:investor')->group(function (): void {
         Route::get('inscription', [InvestorAuthController::class, 'showRegister'])
             ->name('investor.register');
-        Route::post('inscription', [InvestorAuthController::class, 'register']);
+        Route::post('inscription', [InvestorAuthController::class, 'register'])
+            ->middleware('throttle:3,1');
 
         Route::get('connexion', [InvestorAuthController::class, 'showLogin'])
             ->name('investor.login');
-        Route::post('connexion', [InvestorAuthController::class, 'login']);
+        Route::post('connexion', [InvestorAuthController::class, 'login'])
+            ->middleware('throttle:5,1');
 
         // Password reset
         Route::get('mot-de-passe-oublie', [InvestorPasswordResetController::class, 'showForgotForm'])
             ->name('investor.password.request');
         Route::post('mot-de-passe-oublie', [InvestorPasswordResetController::class, 'sendResetLink'])
+            ->middleware('throttle:3,1')
             ->name('investor.password.email');
         Route::get('reinitialiser/{token}', [InvestorPasswordResetController::class, 'showResetForm'])
             ->name('investor.password.reset');
         Route::post('reinitialiser', [InvestorPasswordResetController::class, 'resetPassword'])
+            ->middleware('throttle:3,1')
             ->name('investor.password.update');
     });
 
@@ -85,7 +89,7 @@ Route::prefix('projets')->group(function (): void {
         ->name('projects.invest.form');
 
     Route::post('{project:slug}/investir', [InvestorController::class, 'invest'])
-        ->middleware('auth:investor')
+        ->middleware('auth:investor', 'throttle:10,1')
         ->name('projects.invest');
 });
 

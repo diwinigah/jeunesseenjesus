@@ -19,7 +19,7 @@ class StoreInvestmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'intended_amount' => ['required', 'numeric', 'min:1'],
+            'intended_amount' => ['required', 'numeric', 'min:1', 'max:1000000000'],
             'message' => ['nullable', 'string', 'max:1000'],
         ];
     }

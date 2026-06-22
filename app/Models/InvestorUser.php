@@ -7,14 +7,23 @@ namespace App\Models;
 use App\Enums\ContactMethod;
 use App\Enums\InvestorStatus;
 use App\Enums\InvestorType;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class InvestorUser extends Authenticatable
+class InvestorUser extends Authenticatable implements CanResetPasswordContract
 {
+    use CanResetPassword;
     use Notifiable;
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\InvestorResetPasswordNotification($token));
+    }
+
 
     /**
      * @var list<string>

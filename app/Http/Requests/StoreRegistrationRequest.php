@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests;
 
 use App\Enums\Gender;
+use App\Rules\RecaptchaRule;
 use App\Services\CampEditionService;
 use App\Services\RegistrationService;
 use Illuminate\Foundation\Http\FormRequest;
@@ -41,9 +42,10 @@ class StoreRegistrationRequest extends FormRequest
             'days_presence' => [
                 $edition?->show_days_presence ? 'required' : 'nullable',
                 'array',
+                'distinct',
             ],
             'days_presence.*' => [
-                'nullable',
+                'string',
                 'in:jour_1,jour_2,jour_3,jour_4,jour_5,jour_6',
             ],
 
@@ -58,6 +60,8 @@ class StoreRegistrationRequest extends FormRequest
                 $edition?->show_participant_type ? 'required' : 'nullable',
                 Rule::in(['eleve', 'etudiant', 'adulte']),
             ],
+
+            'g-recaptcha-response' => ['required_with:g-recaptcha-response', new RecaptchaRule()],
         ];
     }
 
@@ -81,6 +85,7 @@ class StoreRegistrationRequest extends FormRequest
             'days_presence.required'    => 'Veuillez indiquer vos jours de présence.',
             'bus_departure.required'    => 'Veuillez indiquer si vous partez avec le bus.',
             'participant_type.required' => 'Veuillez indiquer votre statut (Élève, Étudiant ou Adulte).',
+            'g-recaptcha-response.required_with' => 'Veuillez confirmer que vous n\'êtes pas un robot.',
         ];
     }
 

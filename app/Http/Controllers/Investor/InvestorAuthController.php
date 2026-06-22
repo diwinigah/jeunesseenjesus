@@ -42,11 +42,20 @@ class InvestorAuthController extends Controller
     {
         $credentials = $request->validated();
 
+        if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts('login_' . $request->email, 5)) {
+            return back()->withErrors([
+                'email' => 'Trop de tentatives de connexion. Veuillez réessayer dans ' . \Illuminate\Support\Facades\RateLimiter::availableIn('login_' . $request->email) . ' secondes.',
+            ])->onlyInput('email');
+        }
+
         if (Auth::guard('investor')->attempt($credentials)) {
+            \Illuminate\Support\Facades\RateLimiter::clear('login_' . $request->email);
             $request->session()->regenerate();
 
             return redirect()->intended('/projets');
         }
+
+        \Illuminate\Support\Facades\RateLimiter::hit('login_' . $request->email, 60);
 
         return back()->withErrors([
             'email' => 'Les identifiants fournis ne correspondent pas à nos enregistrements.',
