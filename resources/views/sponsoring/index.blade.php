@@ -42,27 +42,37 @@
 .sp-hero {
     position: relative;
     border-radius: 16px;
-    overflow: hidden;
+    overflow: visible;
     margin-bottom: 2rem;
     box-shadow: 0 8px 32px rgba(0,0,0,0.18);
 }
+.sp-hero-img {
+    position: relative;
+    overflow: hidden;
+    border-radius: 32px;
+    height: 260px;
+}
 .sp-hero img {
     width: 100%;
-    max-height: 260px;
+    height: 100%;
     object-fit: cover;
     display: block;
     filter: brightness(0.65);
+    
 }
 .sp-hero-overlay {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     background: linear-gradient(to bottom, rgba(61,43,31,0.2), rgba(61,43,31,0.82));
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 1.5rem 1rem;
+    padding: 1.5rem 1rem 2rem 1rem;
     text-align: center;
+    min-height: 260px;
 }
 .sp-hero-tag {
     background: #E8490F;
@@ -438,11 +448,17 @@
 ═══════════════════════════════════ */
 @media (max-width: 480px) {
     .sp-page { padding: 0 0.75rem 3rem; }
-    .sp-hero img {
-        max-height: 350px;
+    .sp-hero-img {
+        height: 300px;
+        
     }
     .sp-hero-overlay {
-        padding: 1.75rem 1rem;
+        padding: 1.75rem 1rem 2rem 1rem;
+        min-height: 300px;
+    }
+    .sp-hero img {
+        object-position: center center;
+        
     }
     .sp-hero-title { font-size: 1.2rem; }
     .sp-hero-theme { font-size: 0.88rem; }
@@ -459,6 +475,7 @@
         display: inline-flex;
         flex-wrap: wrap;
         justify-content: center;
+
     }
     .sp-hero-dates .sp-icon svg {
         width: 14px !important;
