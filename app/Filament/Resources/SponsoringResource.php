@@ -8,6 +8,7 @@ use App\Filament\Resources\SponsoringResource\Pages;
 use App\Models\CampEdition;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
@@ -15,7 +16,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 
@@ -99,6 +103,14 @@ class SponsoringResource extends Resource
                 Section::make('Bourses (types de dons)')
                     ->description('Bourse pleine et bourse partielle affichées côte à côte')
                     ->schema([
+
+                        TextInput::make('title_bourses')
+                            ->label('Titre de cette section (personnalisable)')
+                            ->placeholder('Types de bourses')
+                            ->helperText('Laissez vide pour utiliser : "Types de bourses"')
+                            ->nullable()
+                            ->columnSpanFull(),
+
                         Grid::make(2)->schema([
                             TextInput::make('bourse_pleine_label')
                                 ->label('Label bourse pleine')
@@ -121,6 +133,14 @@ class SponsoringResource extends Resource
                 Section::make('Frais de participation par catégorie')
                     ->description('Coûts réels affichés séparément des bourses')
                     ->schema([
+
+                        TextInput::make('title_frais')
+                            ->label('Titre de cette section (personnalisable)')
+                            ->placeholder('Frais de participation par catégorie')
+                            ->helperText('Laissez vide pour utiliser : "Frais de participation par catégorie"')
+                            ->nullable()
+                            ->columnSpanFull(),
+
                         Grid::make(2)->schema([
                             TextInput::make('categorie_adulte_label')
                                 ->label('Label catégorie 1')
@@ -163,6 +183,14 @@ class SponsoringResource extends Resource
 
                 Section::make('Moyens de paiement')
                     ->schema([
+
+                        TextInput::make('title_paiement')
+                            ->label('Titre de cette section (personnalisable)')
+                            ->placeholder('Comment contribuer ?')
+                            ->helperText('Laissez vide pour utiliser : "Comment contribuer ?"')
+                            ->nullable()
+                            ->columnSpanFull(),
+
                         Grid::make(2)->schema([
                             TextInput::make('payment_flooz')
                                 ->label('Flooz (numéro)')
@@ -189,6 +217,31 @@ class SponsoringResource extends Resource
                         ]),
                     ]),
 
+                Section::make('Liens externes (budget, documents, etc.)')
+                    ->description('Ajoutez un ou plusieurs liens vers des documents ou pages externes (budget prévisionnel, programme, etc.)')
+                    ->schema([
+                        Repeater::make('external_links')
+                            ->label('')
+                            ->schema([
+                                Grid::make(2)->schema([
+                                    TextInput::make('label')
+                                        ->label('Titre du bouton')
+                                        ->placeholder('ex: Consulter le budget prévisionnel')
+                                        ->required(),
+                                    TextInput::make('url')
+                                        ->label('URL du lien')
+                                        ->url()
+                                        ->placeholder('https://...')
+                                        ->required(),
+                                ]),
+                            ])
+                            ->addActionLabel('Ajouter un lien')
+                            ->defaultItems(0)
+                            ->nullable()
+                            ->columnSpanFull(),
+                    ])
+                    ->collapsible(),
+
                 Section::make('Contact')
                     ->schema([
                         Grid::make(2)->schema([
@@ -204,6 +257,14 @@ class SponsoringResource extends Resource
 
                 Section::make('Apports en nature')
                     ->schema([
+
+                        TextInput::make('title_nature')
+                            ->label('Titre de cette section (personnalisable)')
+                            ->placeholder('Apports en nature')
+                            ->helperText('Laissez vide pour utiliser : "Apports en nature"')
+                            ->nullable()
+                            ->columnSpanFull(),
+
                         Repeater::make('nature_contributions')
                             ->label('')
                             ->schema([
@@ -218,47 +279,25 @@ class SponsoringResource extends Resource
                             ->columnSpanFull(),
                     ]),
 
-                Section::make('Répartition des participants')
-                    ->schema([
-                        Grid::make(4)->schema([
-                            TextInput::make('participants_adultes')
-                                ->label('Adultes')->numeric()->default(0),
-                            TextInput::make('participants_etudiants')
-                                ->label('Étudiants')->numeric()->default(0),
-                            TextInput::make('participants_lycee')
-                                ->label('Lycée/Collège')->numeric()->default(0),
-                            TextInput::make('participants_enfants')
-                                ->label('Enfants')->numeric()->default(0),
-                        ]),
-
-                        Repeater::make('participants_geo')
-                            ->label('Répartition géographique')
-                            ->schema([
-                                Grid::make(2)->schema([
-                                    TextInput::make('ville')
-                                        ->label('Ville/Zone')->required(),
-                                    TextInput::make('nombre')
-                                        ->label('Nombre')->numeric()->required(),
-                                ]),
-                            ])
-                            ->addActionLabel('Ajouter une ville')
-                            ->defaultItems(0)
-                            ->nullable()
-                            ->columnSpanFull(),
-                    ]),
-
                 Section::make('Budget prévisionnel — Dépenses')
                     ->schema([
                         Repeater::make('budget_expenses')
                             ->label('')
                             ->schema([
-                                Grid::make(3)->schema([
+                                Grid::make(4)->schema([
                                     TextInput::make('designation')
                                         ->label('Désignation')->required(),
                                     TextInput::make('prix_unitaire')
                                         ->label('Prix unitaire (FCFA)')->numeric()->default(0),
                                     TextInput::make('quantite')
                                         ->label('Quantité')->numeric()->default(1),
+                                    Placeholder::make('montant')
+                                        ->label('Montant (FCFA)')
+                                        ->content(function ($get) {
+                                            $prix = $get('prix_unitaire') ?? 0;
+                                            $qte = $get('quantite') ?? 1;
+                                            return number_format($prix * $qte, 0, ',', ' ');
+                                        }),
                                 ]),
                             ])
                             ->addActionLabel('Ajouter une ligne de dépense')
@@ -297,6 +336,17 @@ class SponsoringResource extends Resource
             ])
             ->actions([
                 \Filament\Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()
+                        ->requiresConfirmation()
+                        ->label('Supprimer la sélection')
+                        ->modalHeading('⚠️ Supprimer les éditions sélectionnées')
+                        ->modalDescription('ATTENTION : La suppression d\'une édition supprimera également toutes les inscriptions associées. Cette action est irréversible.')
+                        ->modalSubmitActionLabel('Oui, supprimer définitivement')
+                        ->color('danger'),
+                ]),
             ])
             ->defaultSort('year', 'desc');
     }

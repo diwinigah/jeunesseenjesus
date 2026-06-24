@@ -25,6 +25,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Components\Tab;
@@ -392,6 +393,12 @@ class RegistrationResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    DeleteBulkAction::make()
+                        ->requiresConfirmation()
+                        ->label('Supprimer la sélection')
+                        ->modalHeading('Supprimer les éléments sélectionnés')
+                        ->modalDescription('Cette action est irréversible. Êtes-vous sûr de vouloir supprimer les éléments sélectionnés ?')
+                        ->modalSubmitActionLabel('Oui, supprimer'),
                     Tables\Actions\ExportBulkAction::make()
                         ->label('Exporter Excel')
                         ->exporter(RegistrationExporter::class)

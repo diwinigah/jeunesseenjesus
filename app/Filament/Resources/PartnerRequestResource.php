@@ -285,7 +285,12 @@ class PartnerRequestResource extends Resource
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->requiresConfirmation()
+                        ->label('Supprimer la sélection')
+                        ->modalHeading('Supprimer les éléments sélectionnés')
+                        ->modalDescription('Cette action est irréversible. Êtes-vous sûr de vouloir supprimer les éléments sélectionnés ?')
+                        ->modalSubmitActionLabel('Oui, supprimer'),
                 ]),
             ])
             ->defaultSort('submitted_at', 'desc');

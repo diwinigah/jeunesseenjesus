@@ -59,6 +59,18 @@
     border-bottom: 2px solid #f0e8e4;
 }
 
+/* Description d'édition */
+.registration-page .edition-description {
+    font-size: 0.95rem;
+    color: #3D2B1F;
+    line-height: 1.6;
+    margin-top: 1rem;
+    padding: 1rem 0;
+    border-top: 2px solid #f0e8e4;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
 /* Séparateur de sections */
 .form-section-title {
     font-size: 0.8rem;
@@ -257,6 +269,70 @@ textarea.form-input {
     font-weight: 600;
 }
 
+/* Lien activités */
+.activities-link-block {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+.activities-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fdf6f3;
+    border: 1.5px solid #E8490F;
+    color: #E8490F;
+    padding: 0.55rem 1.1rem;
+    border-radius: 25px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+}
+.activities-link-btn:hover {
+    background: #E8490F;
+    color: #fff;
+}
+.activities-link-btn svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+}
+
+/* Inscription externe */
+.external-registration-block {
+    text-align: center;
+    padding: 3rem 1rem;
+}
+.external-registration-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: linear-gradient(135deg, #E8490F, #ff6b35);
+    color: #fff;
+    padding: 1rem 2rem;
+    border-radius: 14px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 4px 18px rgba(232,73,15,0.3);
+    transition: opacity 0.2s, transform 0.15s;
+    margin-bottom: 0.75rem;
+}
+.external-registration-btn:hover {
+    opacity: 0.92;
+    transform: translateY(-2px);
+    color: #fff;
+}
+.external-registration-btn svg {
+    width: 18px;
+    height: 18px;
+}
+.external-registration-note {
+    font-size: 0.82rem;
+    color: #aaa;
+    margin-top: 0.75rem;
+}
+
 /* Bouton submit */
 .form-submit-btn {
     width: 100%;
@@ -333,14 +409,54 @@ textarea.form-input {
 <div class="reg-header">
     <h1>Inscription Evenement</h1>
     <p>{{ $edition->name }} - inscriptions ouvertes jusqu'au {{ $edition->registration_close_at->format('d/m/Y H:i') }}.</p>
+    @if($edition->description)
+        <div class="edition-description">{{ $edition->description }}</div>
+    @endif
+
+    {{-- LIEN ACTIVITÉS (toujours visible, après la description) --}}
+    @if($edition->activities_link_url && $edition->activities_link_label)
+    <div class="activities-link-block">
+        <a href="{{ $edition->activities_link_url }}"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="activities-link-btn">
+            {{ $edition->activities_link_label }}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+            </svg>
+        </a>
+    </div>
+    @endif
 </div>
 
 @if ($errors->any() && session('_old_input'))
     <div class="form-errors-block">Merci de corriger les champs indiques.</div>
 @endif
 
-<form method="POST" action="{{ route('registration.store') }}" class="registration-card" data-recaptcha>
-    @csrf
+{{-- MODE D'INSCRIPTION --}}
+@if($edition->registration_mode === 'external' && $edition->external_registration_url)
+
+    {{-- 2ÈME MÉTHODE : LIEN EXTERNE --}}
+    <div class="external-registration-block">
+        <a href="{{ $edition->external_registration_url }}"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="external-registration-btn">
+            {{ $edition->external_registration_label ?? 'S\'inscrire' }}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+            </svg>
+        </a>
+        <p class="external-registration-note">
+            Vous serez redirigé vers le formulaire d'inscription externe.
+        </p>
+    </div>
+
+@else
+
+    {{-- 1ÈRE MÉTHODE : FORMULAIRE INTERNE (actuel) --}}
+    <form method="POST" action="{{ route('registration.store') }}" class="registration-card" data-recaptcha>
+        @csrf
 
     <div class="form-grid-2">
         <div class="form-group">
@@ -472,5 +588,7 @@ textarea.form-input {
         </button>
     </div>
 </form>
+
+@endif
 </div>
 @endsection

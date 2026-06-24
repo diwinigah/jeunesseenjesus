@@ -29,17 +29,26 @@ class CampEdition extends Model
         'is_active',
         'show_days_presence', 'show_children_count', 'show_bus_departure',
         'show_participant_type',
+        // Activités et inscription
+        'activities_link_label',
+        'activities_link_url',
+        'registration_mode',
+        'external_registration_label',
+        'external_registration_url',
         // Sponsoring
         'sponsoring_theme', 'sponsoring_intro', 'sponsoring_verse', 'show_sponsoring_page',
         'sponsoring_salutation',
         'budget_total', 'budget_collected', 'participants_target', 'participants_sponsored',
         'budget_entries', 'budget_expenses',
-        'participants_adultes', 'participants_etudiants', 'participants_lycee', 'participants_enfants', 'participants_geo',
         'bourse_pleine_amount', 'bourse_adulte_amount', 'bourse_etudiant_amount', 'bourse_lycee_amount', 'bourse_enfant_amount',
         'bourse_pleine_label', 'bourse_pleine_desc', 'bourse_partielle_label', 'bourse_partielle_desc',
         'categorie_adulte_label', 'categorie_etudiant_label', 'categorie_lycee_label', 'categorie_enfant_label',
         'payment_flooz', 'payment_mixx', 'payment_iban', 'payment_paypal', 'payment_account_name', 'payment_account_number',
         'sponsoring_contact_phone', 'sponsoring_contact_email', 'nature_contributions',
+        // Titres personnalisables des sections
+        'title_bourses', 'title_frais', 'title_nature', 'title_paiement',
+        // Liens externes
+        'external_links',
     ];
 
     /**
@@ -57,6 +66,7 @@ class CampEdition extends Model
         'show_children_count' => 'boolean',
         'show_bus_departure' => 'boolean',
         'show_participant_type' => 'boolean',
+        'registration_mode' => 'string',
         // Sponsoring
         'show_sponsoring_page' => 'boolean',
         'budget_total' => 'integer',
@@ -77,6 +87,7 @@ class CampEdition extends Model
         'bourse_enfant_amount' => 'integer',
         'sponsoring_salutation' => 'string',
         'nature_contributions' => 'array',
+        'external_links' => 'array',
     ];
 
     public function registrations(): HasMany

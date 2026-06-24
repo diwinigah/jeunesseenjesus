@@ -80,6 +80,13 @@ class Registration extends Model
         return $this->hasMany(RegistrationPayment::class);
     }
 
+    protected static function booted(): void
+    {
+        static::deleting(function (self $registration): void {
+            $registration->payments()->delete();
+        });
+    }
+
     public function scopeByEdition(Builder $query, int|CampEdition $edition): Builder
     {
         $editionId = $edition instanceof CampEdition ? $edition->getKey() : $edition;

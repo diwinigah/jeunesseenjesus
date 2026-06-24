@@ -18,6 +18,7 @@ use Filament\Resources\Resource;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -195,16 +196,17 @@ class PartnerResource extends Resource
             ->actions([
                 ActionGroup::make([
                     EditAction::make(),
-                    DeleteBulkAction::make()
-                        ->requiresConfirmation()
-                        ->action(function ($record) {
-                            $record->delete();
-                        }),
+                    Tables\Actions\DeleteAction::make(),
                 ]),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->requiresConfirmation()
+                        ->label('Supprimer la sélection')
+                        ->modalHeading('Supprimer les éléments sélectionnés')
+                        ->modalDescription('Cette action est irréversible. Êtes-vous sûr de vouloir supprimer les éléments sélectionnés ?')
+                        ->modalSubmitActionLabel('Oui, supprimer'),
                 ]),
             ])
             ->defaultSort('display_order', 'asc');

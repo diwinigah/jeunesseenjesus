@@ -286,54 +286,6 @@
 }
 
 /* ═══════════════════════════════════
-   BUDGET TABLE
-═══════════════════════════════════ */
-.sp-budget-wrapper {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    border-radius: 12px;
-}
-.sp-budget-table {
-    width: 100%;
-    min-width: 500px; /* scroll horizontal sur mobile si nécessaire */
-    border-collapse: collapse;
-    background: #fff;
-    font-size: 0.85rem;
-}
-.sp-budget-table thead tr { background: #3D2B1F; color: #fff; }
-.sp-budget-table th {
-    padding: 0.7rem 0.75rem;
-    text-align: left;
-    font-weight: 700;
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    white-space: nowrap;
-}
-.sp-budget-table td {
-    padding: 0.6rem 0.75rem;
-    border-bottom: 1px solid #f0e8e4;
-    color: #444;
-    vertical-align: middle;
-}
-.sp-budget-table tbody tr:hover { background: #fdf6f3; }
-.sp-budget-table tbody tr:last-child td { border-bottom: none; }
-.sp-budget-total-row td {
-    background: #fdf6f3;
-    font-weight: 800;
-    color: #3D2B1F;
-    border-top: 2px solid #E8490F;
-}
-.sp-budget-amount {
-    text-align: right;
-    font-weight: 600;
-    color: #3D2B1F;
-    white-space: nowrap;
-}
-.sp-budget-total-amount { color: #E8490F; font-size: 0.95rem; }
-
-/* ═══════════════════════════════════
    NATURE
 ═══════════════════════════════════ */
 .sp-nature-grid {
@@ -407,6 +359,41 @@
     white-space: nowrap;
 }
 .sp-payment-btn:hover { background: #c73d0d; color: #fff; }
+
+/* ═══════════════════════════════════
+   BUDGET LINK / EXTERNAL LINKS
+═══════════════════════════════════ */
+.sp-external-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    padding: 0.5rem 0;
+}
+.sp-budget-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: #fdf6f3;
+    border: 2px solid #E8490F;
+    color: #E8490F;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+    font-family: 'Raleway', sans-serif;
+}
+.sp-budget-link-btn:hover {
+    background: #E8490F;
+    color: #fff;
+}
+.sp-budget-link-btn svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
 
 /* ═══════════════════════════════════
    CONTACT
@@ -489,8 +476,6 @@
     .sp-contact { padding: 1.5rem 1rem; border-radius: 12px; }
     .sp-contact-items { flex-direction: column; gap: 0.75rem; }
     .sp-section-title { font-size: 0.95rem; }
-    .sp-budget-table { font-size: 0.78rem; min-width: 400px; }
-    .sp-budget-table th, .sp-budget-table td { padding: 0.5rem 0.5rem; }
     .sp-repartition { grid-template-columns: 1fr; }
     .sp-progress-value { font-size: 0.82rem; }
 }
@@ -572,21 +557,27 @@
     
 
     {{-- BOURSES DÉTAILLÉES --}}
+    @if($edition->bourse_pleine_label || $edition->bourse_partielle_label)
     <div class="sp-section">
         <div class="sp-section-title"><span class="sp-icon"> 
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 14l9-5-9-5-9 5 9 5z"/></svg>
-        </span> Types de bourses</div>
+        </span> {{ $edition->title_bourses ?: 'Types de bourses' }}</div>
 
         <div class="sp-bourse-duo">
+            @if($edition->bourse_pleine_label)
             <div class="sp-bourse-card sp-bourse-featured">
                 <div class="sp-bourse-icon"><span class="sp-icon"> 
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.95a1 1 0 00.95.69h4.153c.969 0 1.371 1.24.588 1.81l-3.36 2.44a1 1 0 00-.364 1.118l1.287 3.95c.3.921-.755 1.688-1.538 1.118l-3.36-2.44a1 1 0 00-1.176 0l-3.36 2.44c-.783.57-1.838-.197-1.538-1.118l1.287-3.95a1 1 0 00-.364-1.118L2.07 9.377c-.783-.57-.38-1.81.588-1.81h4.153a1 1 0 00.95-.69l1.286-3.95z"/></svg>
                 </span></div>
                 <h4>{{ $edition->bourse_pleine_label }}</h4>
                 <p>{{ $edition->bourse_pleine_desc }}</p>
-                <div class="sp-bourse-amount">{{ number_format($edition->bourse_pleine_amount ?? 0, 0, ',', ' ') }} FCFA <small>par campeur</small></div>
+                @if($edition->bourse_pleine_amount !== null)
+                <div class="sp-bourse-amount">{{ number_format($edition->bourse_pleine_amount, 0, ',', ' ') }} FCFA <small>par campeur</small></div>
+                @endif
             </div>
+            @endif
 
+            @if($edition->bourse_partielle_label)
             <div class="sp-bourse-card sp-bourse-libre">
                 <div class="sp-bourse-icon"><span class="sp-icon"> 
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-8-4.35-8-10a5 5 0 0110 0 5 5 0 0110 0c0 5.65-8 10-8 10z"/></svg>
@@ -595,38 +586,41 @@
                 <p>{{ $edition->bourse_partielle_desc }}</p>
                 <div class="sp-bourse-amount sp-bourse-libre-amount">Libre</div>
             </div>
+            @endif
         </div>
     </div>
+    @endif
 
     {{-- FRAIS DE PARTICIPATION PAR CATÉGORIE --}}
+    @if($edition->categorie_adulte_label || $edition->categorie_etudiant_label || $edition->categorie_lycee_label || $edition->categorie_enfant_label)
     <div class="sp-section">
         <div class="sp-section-title"><span class="sp-icon"> 
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 14l9-5-9-5-9 5 9 5z"/></svg>
-        </span> Frais de participation par catégorie</div>
+        </span> {{ $edition->title_frais ?: 'Frais de participation par catégorie' }}</div>
 
         <div class="sp-categorie-grid">
-            @if($edition->bourse_adulte_amount > 0)
+            @if($edition->bourse_adulte_amount !== null && $edition->bourse_adulte_amount > 0 && $edition->categorie_adulte_label)
                 <div class="sp-categorie-card">
                     <h4>{{ $edition->categorie_adulte_label }}</h4>
                     <div class="sp-bourse-amount">{{ number_format($edition->bourse_adulte_amount, 0, ',', ' ') }} FCFA</div>
                 </div>
             @endif
 
-            @if($edition->bourse_etudiant_amount > 0)
+            @if($edition->bourse_etudiant_amount !== null && $edition->bourse_etudiant_amount > 0 && $edition->categorie_etudiant_label)
                 <div class="sp-categorie-card">
                     <h4>{{ $edition->categorie_etudiant_label }}</h4>
                     <div class="sp-bourse-amount">{{ number_format($edition->bourse_etudiant_amount, 0, ',', ' ') }} FCFA</div>
                 </div>
             @endif
 
-            @if($edition->bourse_lycee_amount > 0)
+            @if($edition->bourse_lycee_amount !== null && $edition->bourse_lycee_amount > 0 && $edition->categorie_lycee_label)
                 <div class="sp-categorie-card">
                     <h4>{{ $edition->categorie_lycee_label }}</h4>
                     <div class="sp-bourse-amount">{{ number_format($edition->bourse_lycee_amount, 0, ',', ' ') }} FCFA</div>
                 </div>
             @endif
 
-            @if($edition->bourse_enfant_amount > 0)
+            @if($edition->bourse_enfant_amount !== null && $edition->bourse_enfant_amount > 0 && $edition->categorie_enfant_label)
                 <div class="sp-categorie-card">
                     <h4>{{ $edition->categorie_enfant_label }}</h4>
                     <div class="sp-bourse-amount">{{ number_format($edition->bourse_enfant_amount, 0, ',', ' ') }} FCFA</div>
@@ -634,94 +628,16 @@
             @endif
         </div>
     </div>
-
-    @php
-        $totalParticipants = (int)($edition->participants_adultes ?? 0)
-                           + (int)($edition->participants_etudiants ?? 0)
-                           + (int)($edition->participants_lycee ?? 0)
-                           + (int)($edition->participants_enfants ?? 0);
-    @endphp
-
-    @if($totalParticipants > 0 || !empty($edition->participants_geo))
-    <div class="sp-section">
-        <div class="sp-section-title"><span class="sp-icon"> 
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7l9-4 9 4"/><path d="M21 7v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7"/></svg>
-        </span> Prévision des participants</div>
-
-        <div class="sp-repartition">
-            <div class="sp-rep-card">
-                <h4>Par catégorie</h4>
-                @if((int)($edition->participants_adultes ?? 0) > 0)
-                    <div class="sp-rep-row"><span>{{ $edition->categorie_adulte_label ?? 'Adultes' }}</span><strong>{{ number_format($edition->participants_adultes, 0, ',', ' ') }}</strong></div>
-                @endif
-                @if((int)($edition->participants_etudiants ?? 0) > 0)
-                    <div class="sp-rep-row"><span>{{ $edition->categorie_etudiant_label ?? 'Étudiants' }}</span><strong>{{ number_format($edition->participants_etudiants, 0, ',', ' ') }}</strong></div>
-                @endif
-                @if((int)($edition->participants_lycee ?? 0) > 0)
-                    <div class="sp-rep-row"><span>{{ $edition->categorie_lycee_label ?? 'Lycée' }}</span><strong>{{ number_format($edition->participants_lycee, 0, ',', ' ') }}</strong></div>
-                @endif
-                @if((int)($edition->participants_enfants ?? 0) > 0)
-                    <div class="sp-rep-row"><span>{{ $edition->categorie_enfant_label ?? 'Enfants' }}</span><strong>{{ number_format($edition->participants_enfants, 0, ',', ' ') }}</strong></div>
-                @endif
-
-                <div class="sp-rep-total"><span>Total</span><strong>{{ number_format($totalParticipants, 0, ',', ' ') }}</strong></div>
-            </div>
-
-            <div class="sp-rep-card">
-                <h4>Par localisation</h4>
-                @if(!empty($edition->participants_geo) && is_array($edition->participants_geo))
-                    @foreach($edition->participants_geo as $item)
-                        <div class="sp-rep-row"><span>{{ $item['ville'] ?? ($item->ville ?? '—') }}</span><strong>{{ $item['nombre'] ?? ($item->nombre ?? '—') }}</strong></div>
-                    @endforeach
-                @else
-                    <p>Aucune prévision de participant par localisation renseignée.</p>
-                @endif
-            </div>
-        </div>
-    </div>
     @endif
 
-    @if($edition->budget_expenses && count($edition->budget_expenses) > 0)
-    @php
-        $totalDepenses = collect($edition->budget_expenses)
-            ->sum(fn($e) => ($e['prix_unitaire'] ?? 0) * ($e['quantite'] ?? 1));
-    @endphp
 
-        <div class="sp-budget-wrapper">
-        <table class="sp-budget-table">
-            <thead>
-                <tr>
-                    <th>Prix unitaire</th>
-                    <th>Qté</th>
-                    <th class="sp-budget-amount">Montant (FCFA)</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($edition->budget_expenses as $expense)
-                @php $montant = ($expense['prix_unitaire'] ?? 0) * ($expense['quantite'] ?? 1); @endphp
-                <tr>
-                    <td>{{ $expense['designation'] ?? '—' }}</td>
-                    <td>{{ number_format($expense['prix_unitaire'] ?? 0, 0, ',', ' ') }}</td>
-                    <td>{{ $expense['quantite'] ?? 1 }}</td>
-                    <td class="sp-budget-amount">{{ number_format($montant, 0, ',', ' ') }}</td>
-                </tr>
-                @endforeach
-                <tr class="sp-budget-total-row">
-                    <td colspan="3">TOTAL</td>
-                    <td class="sp-budget-total-amount">{{ number_format($totalDepenses, 0, ',', ' ') }}</td>
-                </tr>
-            </tbody>
-        </table>
-        </div>
-    </div>
-    @endif
 
     {{-- APPORTS EN NATURE --}}
     @if($edition->nature_contributions && count($edition->nature_contributions) > 0)
         <div class="sp-section">
         <div class="sp-section-title"><span class="sp-icon"> 
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7l9-4 9 4"/><path d="M21 7v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7"/></svg>
-        </span> Apports en nature</div>
+        </span> {{ $edition->title_nature ?: 'Apports en nature' }}</div>
         <div class="sp-nature-grid">
                     @foreach($edition->nature_contributions as $index => $item)
                         <div class="sp-nature-card">
@@ -740,7 +656,7 @@
         <div class="sp-section">
         <div class="sp-section-title"><span class="sp-icon"> 
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-        </span> Comment contribuer ?</div>
+        </span> {{ $edition->title_paiement ?: 'Comment contribuer ?' }}</div>
         <div class="sp-payment-grid">
             @if($edition->payment_flooz)
             <div class="sp-payment-card">
@@ -789,6 +705,27 @@
                 <p><a class="sp-payment-btn" href="{{ e($edition->payment_paypal) }}" target="_blank" rel="noopener">Contribuer via PayPal →</a></p>
             </div>
             @endif
+        </div>
+    </div>
+    @endif
+
+    {{-- Liens externes (après Comment contribuer ?) --}}
+    @if($edition->external_links && count($edition->external_links) > 0)
+    <div class="sp-section">
+        <div class="sp-external-links">
+            @foreach($edition->external_links as $link)
+                @if(!empty($link['url']) && !empty($link['label']))
+                <a href="{{ $link['url'] }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="sp-budget-link-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
+                    </svg>
+                    {{ html_entity_decode($link['label']) }}
+                </a>
+                @endif
+            @endforeach
         </div>
     </div>
     @endif

@@ -49,9 +49,8 @@ class EditSponsoring extends EditRecord
             'sponsoring_contact_email',
             'nature_contributions',
             'budget_entries', 'budget_expenses',
-            'participants_adultes', 'participants_etudiants',
-            'participants_lycee', 'participants_enfants',
-            'participants_geo',
+            'title_bourses', 'title_frais', 'title_nature', 'title_paiement',
+            'external_links',
         ];
 
         // Préparer le payload des champs sponsoring uniquement
@@ -63,8 +62,6 @@ class EditSponsoring extends EditRecord
             'bourse_etudiant_amount', 'bourse_lycee_amount',
             'bourse_enfant_amount', 'budget_total', 'budget_collected',
             'participants_target', 'participants_sponsored',
-            'participants_adultes', 'participants_etudiants',
-            'participants_lycee', 'participants_enfants',
         ];
 
         foreach ($numericNotNull as $field) {

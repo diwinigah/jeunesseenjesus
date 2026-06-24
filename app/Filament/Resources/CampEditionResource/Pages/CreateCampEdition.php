@@ -105,7 +105,8 @@ class CreateCampEdition extends CreateRecord
                             ->label('Description')
                             ->placeholder('Informations internes ou publiques sur cette edition')
                             ->rows(5),
-                    ]),
+                    ])
+                    ->columnSpanFull(),
             ]);
     }
 
