@@ -193,7 +193,6 @@ class PartnerRequestResource extends Resource
                     ->label('Statut')
                     ->options([
                         PartnerRequestStatus::New->value => 'Nouvelle',
-                        PartnerRequestStatus::Reviewed->value => 'Examinée',
                         PartnerRequestStatus::Accepted->value => 'Acceptée',
                         PartnerRequestStatus::Rejected->value => 'Rejetée',
                     ]),
@@ -212,24 +211,6 @@ class PartnerRequestResource extends Resource
                 ActionGroup::make([
                     EditAction::make(),
 
-                    // Marquer comme examiné
-                    \Filament\Tables\Actions\Action::make('reviewed')
-                        ->label('Marquer comme examiné')
-                        ->icon('heroicon-o-eye')
-                        ->color('info')
-                        ->action(function (PartnerRequest $record): void {
-                            $record->update([
-                                'status' => PartnerRequestStatus::Reviewed->value,
-                            ]);
-
-                            Notification::make()
-                                ->title('Statut mis à jour')
-                                ->body('La demande a été marquée comme examinée.')
-                                ->success()
-                                ->send();
-                        })
-                        ->hidden(fn (PartnerRequest $record) => $record->status !== PartnerRequestStatus::New),
-
                     // Accepter
                     \Filament\Tables\Actions\Action::make('accept')
                         ->label('Accepter')
@@ -245,7 +226,7 @@ class PartnerRequestResource extends Resource
                                 ->success()
                                 ->send();
                         })
-                        ->hidden(fn (PartnerRequest $record) => $record->status !== PartnerRequestStatus::Reviewed),
+                        ->hidden(fn (PartnerRequest $record) => $record->status !== PartnerRequestStatus::Accepted),
 
                     // Rejeter
                     \Filament\Tables\Actions\Action::make('reject')
@@ -263,7 +244,7 @@ class PartnerRequestResource extends Resource
                                 ->warning()
                                 ->send();
                         })
-                        ->hidden(fn (PartnerRequest $record) => $record->status !== PartnerRequestStatus::Reviewed),
+                        ->hidden(fn (PartnerRequest $record) => $record->status !== PartnerRequestStatus::New),
 
                     // Convertir en partenaire
                     \Filament\Tables\Actions\Action::make('convert')

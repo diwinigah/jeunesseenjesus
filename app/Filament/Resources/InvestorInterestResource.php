@@ -41,7 +41,8 @@ class InvestorInterestResource extends Resource
                         Forms\Components\Toggle::make('has_account')
                             ->label('Investisseur avec compte')
                             ->default(fn (?ProjectInvestorInterest $record) => $record?->investor_user_id !== null)
-                            ->live(),
+                            ->live()
+                            ->reactive(),
 
                         Forms\Components\Select::make('investor_user_id')
                             ->label('Choisir l\'investisseur')
@@ -136,6 +137,7 @@ class InvestorInterestResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('investorUser.organization_name')
                     ->label('Organisation')
+                    ->getStateUsing(fn (ProjectInvestorInterest $record): ?string => $record->investorUser?->organization_name ?? $record->manual_organisation)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('investor_email')
                     ->label('Email')
@@ -154,6 +156,9 @@ class InvestorInterestResource extends Resource
                     ->label('Montant')
                     ->money('XOF')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('message')
+                    ->label('Message')
+                    ->wrap(),
                 Tables\Columns\BadgeColumn::make('status')
                     ->label('Statut')
                     ->formatStateUsing(fn (ProjectInvestorInterestStatus|string $state): string => match ($state instanceof ProjectInvestorInterestStatus ? $state : ProjectInvestorInterestStatus::from($state)) {

@@ -179,6 +179,7 @@ class CampEditionResource extends Resource
                             ])
                             ->default('internal')
                             ->inline()
+                            ->reactive()
                             ->columnSpanFull(),
 
                         Forms\Components\TextInput::make('external_registration_label')

@@ -196,7 +196,7 @@ class PartnerResource extends Resource
             ->actions([
                 ActionGroup::make([
                     EditAction::make(),
-                    Tables\Actions\DeleteAction::make(),
+                    DeleteAction::make(),
                 ]),
             ])
             ->bulkActions([

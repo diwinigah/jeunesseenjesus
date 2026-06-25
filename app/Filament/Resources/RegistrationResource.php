@@ -20,6 +20,7 @@ use App\Services\RegistrationService;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Forms;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -55,26 +56,30 @@ class RegistrationResource extends Resource
                             ->label('Montant total')
                             ->disabled()
                             ->dehydrated(false)
-                            ->formatStateUsing(fn (Registration $record): string => number_format((float) $record->total_amount, 2, ',', ' ')),
+                            ->formatStateUsing(fn (?Registration $record): string => number_format((float) ($record?->total_amount ?? 0), 2, ',', ' ')),
 
                         Forms\Components\TextInput::make('paid_amount')
                             ->label('Montant paye')
                             ->disabled()
                             ->dehydrated(false)
-                            ->formatStateUsing(fn (Registration $record): string => number_format((float) $record->paid_amount, 2, ',', ' ')),
+                            ->formatStateUsing(fn (?Registration $record): string => number_format((float) ($record?->paid_amount ?? 0), 2, ',', ' ')),
 
                         Forms\Components\TextInput::make('remaining_amount')
                             ->label('Montant restant')
                             ->disabled()
                             ->dehydrated(false)
-                            ->formatStateUsing(fn (Registration $record): string => number_format((float) $record->remaining_amount, 2, ',', ' ')),
+                            ->formatStateUsing(fn (?Registration $record): string => number_format((float) ($record?->remaining_amount ?? 0), 2, ',', ' ')),
 
                         Forms\Components\Select::make('payment_status')
                             ->label('Statut paiement')
-                            ->options(self::paymentStatusOptions())
+                            ->options([
+                                PaymentStatus::Unpaid->value => 'Non payé',
+                                PaymentStatus::Partial->value => 'Partiel',
+                                PaymentStatus::Paid->value => 'Payé',
+                            ])
                             ->disabled()
                             ->dehydrated(false)
-                            ->formatStateUsing(fn (PaymentStatus|string $state): string => self::paymentStatusLabel($state)),
+                            ->formatStateUsing(fn (PaymentStatus|string|null $state): string => $state === null ? '-' : self::paymentStatusLabel($state)),
                     ])
                     ->columns(4),
 
@@ -130,33 +135,90 @@ class RegistrationResource extends Resource
                 Forms\Components\Section::make('Paiement et statut')
                     ->schema([
                         Forms\Components\TextInput::make('total_amount')
-                            ->label('Montant total')
+                            ->label('Montant total (XOF)')
                             ->required()
                             ->numeric()
-                            ->minValue(0),
+                            ->minValue(0)
+                            ->maxValue(10000000)
+                            ->helperText('Montant total dû par le participant')
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function ($state, Get $get, Set $set): void {
+                                $total = (float) ($state ?? 0);
+                                $paid = (float) ($get('paid_amount') ?? 0);
+                                $remaining = max(0, $total - $paid);
+
+                                $set('remaining_amount', number_format((float) $remaining, 2, '.', ''));
+
+                                if ($paid <= 0 || $total <= 0) {
+                                    $set('payment_status', PaymentStatus::Unpaid->value);
+                                } elseif ($paid >= $total) {
+                                    $set('payment_status', PaymentStatus::Paid->value);
+                                } else {
+                                    $set('payment_status', PaymentStatus::Partial->value);
+                                }
+                            }),
                         Forms\Components\TextInput::make('paid_amount')
-                            ->label('Montant paye')
+                            ->label('Montant payé (XOF)')
                             ->required()
                             ->numeric()
-                            ->minValue(0),
+                            ->minValue(0)
+                            ->helperText('Ne peut pas dépasser le montant total')
+                            ->live(onBlur: true)
+                            ->lte('total_amount')
+                            ->validationMessages([
+                                'lte' => 'Le montant payé ne peut pas dépasser le montant total.',
+                            ])
+                            ->afterStateUpdated(function ($state, Get $get, Set $set): void {
+                                $total = (float) ($get('total_amount') ?? 0);
+                                $paid = (float) ($state ?? 0);
+
+                                if ($paid > $total && $total > 0) {
+                                    Notification::make()
+                                        ->warning()
+                                        ->title('Montant incohérent')
+                                        ->body('Le montant payé (' . number_format((float) $paid, 0, ',', ' ') . ' XOF) dépasse le montant total (' . number_format((float) $total, 0, ',', ' ') . ' XOF).')
+                                        ->persistent()
+                                        ->send();
+                                }
+
+                                $remaining = max(0, $total - $paid);
+                                $set('remaining_amount', number_format((float) $remaining, 2, '.', ''));
+
+                                if ($paid <= 0 || $total <= 0) {
+                                    $set('payment_status', PaymentStatus::Unpaid->value);
+                                } elseif ($paid >= $total) {
+                                    $set('payment_status', PaymentStatus::Paid->value);
+                                } else {
+                                    $set('payment_status', PaymentStatus::Partial->value);
+                                }
+                            }),
                         Forms\Components\TextInput::make('remaining_amount')
-                            ->label('Montant restant')
+                            ->label('Montant restant (XOF)')
                             ->disabled()
-                            ->dehydrated(false)
-                            ->formatStateUsing(fn (Registration $record): string => number_format((float) $record->remaining_amount, 2, ',', ' ')),
+                            ->dehydrated(true)
+                            ->helperText('Calculé automatiquement')
+                            ->afterStateHydrated(function ($component, $state, $record) {
+                                if ($record) {
+                                    $component->state(number_format((float) ($record->remaining_amount ?? 0), 2, '.', ''));
+                                }
+                            }),
                         Forms\Components\Select::make('payment_status')
-                            ->label('Statut paiement')
-                            ->options(self::paymentStatusOptions())
-                            ->required()
-                            ->native(false),
-                        
-                        Forms\Components\DateTimePicker::make('submitted_at')
-                            ->label('Date de soumission')
-                            ->required()
-                            ->seconds(false),
-                        Forms\Components\DateTimePicker::make('confirmed_at')
-                            ->label('Date de confirmation')
-                            ->seconds(false),
+                            ->label('Statut de paiement')
+                            ->options([
+                                PaymentStatus::Unpaid->value => 'Non payé',
+                                PaymentStatus::Partial->value => 'Partiel',
+                                PaymentStatus::Paid->value => 'Payé',
+                            ])
+                            ->dehydrated(true)
+                            ->live()
+                            ->afterStateHydrated(function ($component, $record) {
+                                if ($record) {
+                                    $component->state($record->payment_status instanceof PaymentStatus
+                                        ? $record->payment_status->value
+                                        : (string) ($record->payment_status ?? PaymentStatus::Unpaid->value)
+                                    );
+                                }
+                            }),
                     ])
                     ->columns(3),
 
@@ -191,13 +253,7 @@ class RegistrationResource extends Resource
                             ->label('Départ avec le bus')
                             ->nullable(),
                     ])
-                    ->columnSpanFull()
-                    ->visible(fn ($record) => $record && (
-                        $record->days_presence !== null ||
-                        $record->children_count !== null ||
-                        $record->bus_departure !== null ||
-                        $record->participant_type !== null
-                    )),
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -266,8 +322,8 @@ class RegistrationResource extends Resource
                 Tables\Columns\TextColumn::make('editionSection.section')
                     ->label('Section')
                     ->badge()
-                    ->formatStateUsing(fn (SectionType|string $state): string => ($state instanceof SectionType ? $state : SectionType::from($state))->label())
-                    ->color(fn (SectionType|string $state): string => ($state instanceof SectionType ? $state : SectionType::from($state))->color())
+                    ->formatStateUsing(fn (SectionType|string|null $state): string => $state === null ? '-' : ($state instanceof SectionType ? $state : SectionType::from($state))->label())
+                    ->color(fn (SectionType|string|null $state): string => $state === null ? 'gray' : ($state instanceof SectionType ? $state : SectionType::from($state))->color())
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('remaining_amount')
@@ -278,8 +334,8 @@ class RegistrationResource extends Resource
                 Tables\Columns\TextColumn::make('payment_status')
                     ->label('Paiement')
                     ->badge()
-                    ->formatStateUsing(fn (PaymentStatus|string $state): string => self::paymentStatusLabel($state))
-                    ->color(fn (PaymentStatus|string $state): string => match ($state instanceof PaymentStatus ? $state : PaymentStatus::from($state)) {
+                    ->formatStateUsing(fn (PaymentStatus|string|null $state): string => $state === null ? '-' : self::paymentStatusLabel($state))
+                    ->color(fn (PaymentStatus|string|null $state): string => match ($state instanceof PaymentStatus ? $state : ($state === null ? PaymentStatus::Unpaid : PaymentStatus::from($state))) {
                         PaymentStatus::Unpaid => 'danger',
                         PaymentStatus::Partial => 'warning',
                         PaymentStatus::Paid => 'success',
@@ -440,9 +496,9 @@ class RegistrationResource extends Resource
     public static function paymentStatusOptions(): array
     {
         return [
-            PaymentStatus::Unpaid->value => 'Non paye',
+            PaymentStatus::Unpaid->value => 'Non payé',
             PaymentStatus::Partial->value => 'Partiel',
-            PaymentStatus::Paid->value => 'Paye',
+            PaymentStatus::Paid->value => 'Payé',
         ];
     }
 

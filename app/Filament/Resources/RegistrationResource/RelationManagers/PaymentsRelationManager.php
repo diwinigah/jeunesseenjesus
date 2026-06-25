@@ -37,11 +37,11 @@ class PaymentsRelationManager extends RelationManager
                     ->required()
                     ->numeric()
                     ->minValue(0.01)
-                    ->maxValue(fn (): float => (float) $this->getOwnerRecord()->remaining_amount)
+                    ->maxValue(fn (): float => (float) ($this->getOwnerRecord()?->remaining_amount ?? 0))
                     ->step(0.01)
                     ->helperText(fn (): string => sprintf(
                         'Montant restant : %s',
-                        number_format((float) $this->getOwnerRecord()->remaining_amount, 2, ',', ' '),
+                        number_format((float) ($this->getOwnerRecord()?->remaining_amount ?? 0), 2, ',', ' '),
                     )),
 
                 Forms\Components\Select::make('payment_method')
