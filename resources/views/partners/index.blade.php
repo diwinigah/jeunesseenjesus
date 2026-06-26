@@ -34,7 +34,7 @@
 
 @section('content')
 <div class="part-idx-header">
-    <div class="part-idx-eyebrow">Jeunesse en Jésus</div>
+    <div class="part-idx-eyebrow">Partenaires.</div>
     <h1 class="part-idx-h1">Nos partenaires</h1>
     <p class="part-idx-lead">Découvrez les organisations et entreprises qui soutiennent nos initiatives et accompagnent notre mission.</p>
 </div>
@@ -47,7 +47,7 @@
 @else
     <section class="part-idx-grid">
         @foreach ($partners as $partner)
-            <article class="part-idx-card">
+            <article class="part-idx-card animate-left">
                 <div class="part-idx-logo-wrapper">
                     @if ($partner->logo_path)
                         <img src="{{ asset('storage/' . $partner->logo_path) }}" alt="{{ $partner->name }}" class="part-idx-logo">

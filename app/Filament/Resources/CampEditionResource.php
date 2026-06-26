@@ -133,6 +133,13 @@ class CampEditionResource extends Resource
                             ->rows(5),
                     ])
                     ->columnSpanFull(),
+                Forms\Components\TextInput::make('registration_page_title')
+                    ->label('Titre de la page d\'inscription')
+                    ->placeholder('Inscription Evenement')
+                    ->helperText('Laissez vide pour utiliser le titre par défaut : "Inscription Evenement"')
+                    ->nullable()
+                    ->maxLength(150)
+                    ->columnSpanFull(),
                 Forms\Components\Section::make('Champs optionnels du formulaire public')
                     ->description('Activez les champs supplémentaires à afficher lors de l\'inscription')
                     ->schema([

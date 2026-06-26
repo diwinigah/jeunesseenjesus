@@ -27,14 +27,14 @@
 <div class="inv-invest-container">
     <a href="{{ route('projects.show', ['project' => $project->slug]) }}" class="inv-invest-back">← Retour au projet</a>
 
-    <div class="inv-invest-box">
+    <div class="inv-invest-box animate-left">
         <h1 class="inv-invest-h1">Investir dans ce projet</h1>
         <p class="inv-invest-subtitle">{{ $project->title }}</p>
 
         <form method="POST" action="{{ route('projects.invest', ['project' => $project->slug]) }}">
             @csrf
 
-            <div class="inv-invest-group @if ($errors->has('intended_amount') && session('_old_input')) error @endif">
+            <div class="inv-invest-group animate-left @if ($errors->has('intended_amount') && session('_old_input')) error @endif">
                 <label for="intended_amount" class="inv-invest-label">Montant proposé (F CFA) *</label>
                 <input type="number" name="intended_amount" id="intended_amount" class="inv-invest-input" value="{{ old('intended_amount') }}" step="1" min="1" required>
                 @if ($errors->has('intended_amount') && session('_old_input'))
@@ -42,7 +42,7 @@
                 @endif
             </div>
 
-            <div class="inv-invest-group @if ($errors->has('message') && session('_old_input')) error @endif">
+            <div class="inv-invest-group animate-left @if ($errors->has('message') && session('_old_input')) error @endif">
                 <label for="message" class="inv-invest-label">Message (optionnel)</label>
                 <textarea name="message" id="message" class="inv-invest-textarea" placeholder="Partagez vos motivations ou vos conditions...">{{ old('message') }}</textarea>
                 @if ($errors->has('message') && session('_old_input'))
@@ -63,3 +63,4 @@
     </div>
 </div>
 @endsection
+

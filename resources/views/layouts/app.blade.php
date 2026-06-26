@@ -14,6 +14,8 @@
     <title>@yield('title', 'Jeunesse en Jésus')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ asset('css/j2-theme.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     @stack('styles')
 </head>
 <body>
@@ -21,12 +23,27 @@
 <!-- TOPBAR sombre -->
 <div class="j2-topbar">
     <div class="j2-topbar-inner">
-        <a href="https://www.youtube.com/channel/UC9EJNZo1McDNuKlbdIuZRXg" target="_blank">
-            ▶ Youtube
+
+        <a href="https://www.youtube.com/channel/UC9EJNZo1McDNuKlbdIuZRXg" target="_blank" title="YouTube">
+            <i class="fa-brands fa-youtube" style="color:#FF0000;"></i> YouTube
         </a>
-        <span>
-            📞 +228 93745959 / +228 99323206 
-        </span>
+
+        <a href="https://web.facebook.com/jeunesseenjesus?locale=fr_FR" target="_blank" title="Facebook">
+            <i class="fa-brands fa-facebook" style="color:#1877F2;"></i> Facebook
+        </a>
+
+        <a href="https://whatsapp.com/channel/0029VbBhlT5LtOjGglMVuY0k" target="_blank" title="WhatsApp">
+            <i class="fa-brands fa-whatsapp" style="color:#25D366;"></i> WhatsApp
+        </a>
+
+        <a href="tel:+22893745959" title="Appeler">
+            <i class="fa-solid fa-phone" style="color:#ffffff;"></i> +228 93745959
+        </a>
+
+        <a href="tel:+22899323206" title="Appeler">
+            <i class="fa-solid fa-phone" style="color:#ffffff;"></i> +228 99323206
+        </a>
+
     </div>
 </div>
 
@@ -55,7 +72,7 @@
                 </li>
                 <li>
                     <a href="{{ url('/camp') }}" class="j2-nav-link {{ request()->is('camp*') ? 'active' : '' }}">
-                        Inscription CIVA
+                        Inscription 
                     </a>
                 </li>
                  <li>
@@ -137,7 +154,14 @@
         <div class="j2-footer-col">
             <h3 class="j2-footer-title">Jeunesse en Jésus</h3>
             <p>Doulassame, côté sud<br>Clôture université de Lomé</p>
-            <p>📞 +228 93745959  /<br>+228 99323206 </p>
+            <p>     <a href="tel:+22893745959" title="Appeler">
+            <i class="fa-solid fa-phone" style="color:#E8490F;"></i> +228 93745959
+        </a>
+            <br>
+        <a href="tel:+22899323206" title="Appeler">
+            <i class="fa-solid fa-phone" style="color:#E8490F;"></i> +228 99323206
+        </a>
+            </p>
         </div>
         <div class="j2-footer-col">
             <h3 class="j2-footer-title">Liens rapides</h3>
@@ -182,9 +206,14 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: 'Poppins', sans-serif;
     color: #333333;
     background: #fff;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
 }
 
 a {
@@ -194,10 +223,10 @@ a {
 
 /* === TOPBAR === */
 .j2-topbar {
-    background: #3D2B1F;
+    background:  #39312f;
     color: #fff;
-    font-size: 0.8rem;
-    padding: 6px 0;
+    font-size: 14px;
+    padding: 8px 0;
 }
 
 .j2-topbar-inner {
@@ -252,12 +281,18 @@ a {
 }
 
 .j2-logo-text {
-    font-size: 1.4rem;
+     font-weight: 900;
+    transition: color 0.3s ease;
+     color: inherit;
+    text-decoration: none;
+     font-size: 1.8rem;
     font-weight: 700;
-    color: #333333;
+    color:  #504d4c;
     font-family: -apple-system,
         BlinkMacSystemFont,
         'Segoe UI', sans-serif;
+        line-height: 1.2;
+        margin-bottom: 0;
 }
 
 /* === NAV === */
@@ -651,6 +686,23 @@ a {
         display: none !important;
     }
 }
+
+/* ===== ANIMATIONS SCROLL ===== */
+.animate-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+.animate-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+.animate-up.visible,
+.animate-left.visible {
+    opacity: 1;
+    transform: translate(0);
+}
 </style>
 
 <script>
@@ -703,5 +755,45 @@ document.addEventListener('DOMContentLoaded', function () {
 @endif
 
 @stack('scripts')
+
+<!-- ===== INTERSECTION OBSERVER ANIMATIONS ===== -->
+<script>
+(function() {
+    const animatedEls = document.querySelectorAll('.animate-up, .animate-left');
+    
+    if (!animatedEls.length) return;
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                const el = entry.target;
+                const index = Array.from(animatedEls).indexOf(el);
+                setTimeout(function() {
+                    el.classList.add('visible');
+                }, index * 120);
+                observer.unobserve(el);
+            }
+        });
+    }, { threshold: 0.05, rootMargin: '0px 0px -30px 0px' });
+
+    animatedEls.forEach(function(el) {
+        observer.observe(el);
+    });
+
+    // Forcer la vérification immédiate au chargement
+    setTimeout(function() {
+        animatedEls.forEach(function(el) {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < window.innerHeight) {
+                const index = Array.from(animatedEls).indexOf(el);
+                setTimeout(function() {
+                    el.classList.add('visible');
+                }, index * 120);
+                observer.unobserve(el);
+            }
+        });
+    }, 100);
+})();
+</script>
 </body>
 </html>

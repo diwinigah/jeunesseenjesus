@@ -407,7 +407,7 @@ textarea.form-input {
     </div>
 @endif
 <div class="reg-header">
-    <h1>Inscription Evenement</h1>
+    <h1>{{ $edition->registration_page_title ?: 'Inscription Evenement' }}</h1>
     <p>{{ $edition->name }} - inscriptions ouvertes jusqu'au {{ $edition->registration_close_at->format('d/m/Y H:i') }}.</p>
     @if($edition->description)
         <div class="edition-description">{{ $edition->description }}</div>
@@ -455,17 +455,17 @@ textarea.form-input {
 @else
 
     {{-- 1ÈRE MÉTHODE : FORMULAIRE INTERNE (actuel) --}}
-    <form method="POST" action="{{ route('registration.store') }}" class="registration-card" data-recaptcha>
+    <form method="POST" action="{{ route('registration.store') }}" class="registration-card animate-left" data-recaptcha>
         @csrf
 
     <div class="form-grid-2">
-        <div class="form-group">
+        <div class="form-group animate-left">
             <label for="first_name" class="form-label">Prenom</label>
             <input id="first_name" name="first_name" value="{{ old('first_name') }}" required autocomplete="given-name" class="reg-input form-input">
             @if ($errors->has('first_name') && session('_old_input')) <div class="form-error">{{ $errors->first('first_name') }}</div> @endif
         </div>
 
-        <div class="form-group">
+        <div class="form-group animate-left">
             <label for="last_name" class="form-label">Nom</label>
             <input id="last_name" name="last_name" value="{{ old('last_name') }}" required autocomplete="family-name" class="reg-input form-input">
             @if ($errors->has('last_name') && session('_old_input')) <div class="form-error">{{ $errors->first('last_name') }}</div> @endif
@@ -473,7 +473,7 @@ textarea.form-input {
     </div>
 
     <div class="form-grid-2" style="margin-top:16px">
-        <div class="form-group">
+        <div class="form-group animate-left">
             <label for="gender" class="form-label">Genre</label>
             <select id="gender" name="gender" required class="reg-input form-input">
                 <option value="">Choisir</option>
@@ -484,7 +484,7 @@ textarea.form-input {
             @if ($errors->has('gender') && session('_old_input')) <div class="form-error">{{ $errors->first('gender') }}</div> @endif
         </div>
 
-        <div class="form-group">
+        <div class="form-group animate-left">
             <label for="edition_section_id" class="form-label">Quelle est votre section ?</label>
             <div class="form-helper">(ignorez si vous avez été invité)</div>
             <select id="edition_section_id" name="edition_section_id" class="reg-input form-input">
@@ -500,7 +500,7 @@ textarea.form-input {
     </div>
 
     <div class="form-grid-2" style="margin-top:16px">
-        <div class="form-group">
+        <div class="form-group animate-left">
             <label for="phone" class="form-label">Telephone</label>
             <input id="phone" name="phone" type="tel" inputmode="tel" pattern="[\+0-9\s\-\(\)]{7,20}" value="{{ old('phone') }}" required autocomplete="tel" class="reg-input form-input">
             @if ($errors->has('phone') && session('_old_input')) <div class="form-error">{{ $errors->first('phone') }}</div> @endif
@@ -510,7 +510,7 @@ textarea.form-input {
             </p>
         </div>
 
-        <div class="form-group">
+        <div class="form-group animate-left">
             <label for="whatsapp_phone" class="form-label">WhatsApp</label>
             <input id="whatsapp_phone" name="whatsapp_phone" type="tel" inputmode="tel" pattern="[\+0-9\s\-\(\)]{7,20}" value="{{ old('whatsapp_phone') }}" autocomplete="tel" class="reg-input form-input">
             <div class="form-helper">Facultatif.</div>
@@ -518,14 +518,14 @@ textarea.form-input {
         </div>
     </div>
 
-    <div class="form-group" style="margin-top:16px">
+    <div class="form-group animate-left" style="margin-top:16px">
         <label for="city" class="form-label">Ville</label>
         <input id="city" name="city" value="{{ old('city') }}" autocomplete="address-level2" class="reg-input form-input">
         @if ($errors->has('city') && session('_old_input')) <div class="form-error">{{ $errors->first('city') }}</div> @endif
     </div>
 
     @if($edition->show_days_presence)
-        <div class="form-group" style="margin-top:16px">
+        <div class="form-group animate-left" style="margin-top:16px">
             <label class="form-label">Combien de jours passerez-vous au camp ?</label>
             <div class="days-checkboxes">
                 @foreach(['jour_1'=>'Jour 1','jour_2'=>'Jour 2','jour_3'=>'Jour 3','jour_4'=>'Jour 4','jour_5'=>'Jour 5','jour_6'=>'Jour 6'] as $key => $label)
@@ -540,7 +540,7 @@ textarea.form-input {
     @endif
 
     @if($edition->show_children_count)
-        <div class="form-group" style="margin-top:16px">
+        <div class="form-group animate-left" style="margin-top:16px">
             <label for="children_count" class="form-label">Nombre d'enfants accompagnateurs <span class="form-helper">(facultatif)</span></label>
             <input id="children_count" name="children_count" type="number" min="0" max="20" value="{{ old('children_count') }}" class="reg-input form-input">
             @if ($errors->has('children_count') && session('_old_input')) <div class="form-error">{{ $errors->first('children_count') }}</div> @endif
@@ -548,7 +548,7 @@ textarea.form-input {
     @endif
 
     @if($edition->show_bus_departure)
-        <div class="form-group" style="margin-top:16px">
+        <div class="form-group animate-left" style="margin-top:16px">
             <label class="form-label">Départ avec le bus ? *</label>
             <div class="radio-group">
                 <label>
@@ -563,7 +563,7 @@ textarea.form-input {
     @endif
 
     @if($edition->show_participant_type)
-        <div class="form-group" style="margin-top:16px">
+        <div class="form-group animate-left" style="margin-top:16px">
             <label for="participant_type" class="form-label">Vous êtes... *</label>
             <select id="participant_type" name="participant_type" required class="reg-input form-input">
                 <option value="">-- Sélectionner --</option>
@@ -592,3 +592,4 @@ textarea.form-input {
 @endif
 </div>
 @endsection
+

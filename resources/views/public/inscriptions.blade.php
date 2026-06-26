@@ -100,7 +100,7 @@
                 </thead>
                 <tbody>
                     @foreach($registrations as $index => $registration)
-                    <tr>
+                    <tr class="animate-up">
                         <td>{{ $index + 1 }}</td>
                         <td>{{ Str::upper($registration->last_name) }}</td>
                         <td>{{ Str::ucfirst(Str::lower($registration->first_name)) }}</td>

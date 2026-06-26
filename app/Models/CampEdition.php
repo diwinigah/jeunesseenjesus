@@ -35,6 +35,7 @@ class CampEdition extends Model
         'registration_mode',
         'external_registration_label',
         'external_registration_url',
+        'registration_page_title',
         // Sponsoring
         'sponsoring_theme', 'sponsoring_intro', 'sponsoring_verse', 'show_sponsoring_page',
         'sponsoring_salutation',

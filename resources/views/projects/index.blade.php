@@ -34,7 +34,7 @@
 
 @section('content')
 <header class="proj-header">
-    <div class="proj-eyebrow">Jeunesse en Jésus</div>
+    <div class="proj-eyebrow">Projets</div>
     <h1 class="proj-h1">Projets à financer</h1>
     <p class="proj-lead">Découvrez les projets publiés et accompagnez ceux qui construisent l'avenir de Jeunesse en Jésus.</p>
 </header>
@@ -51,7 +51,7 @@
                 $progress = $projectService->getProgressPercentage($project);
             @endphp
 
-            <article class="proj-card">
+            <article class="proj-card animate-left">
                 @if ($project->featured_image_path)
                     <img src="{{ asset('storage/' . $project->featured_image_path) }}" alt="{{ $project->title }}">
                 @else

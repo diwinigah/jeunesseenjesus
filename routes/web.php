@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SponsoringController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('registration.show');
 });
 
 Route::get('/camp', [RegistrationController::class, 'show'])
